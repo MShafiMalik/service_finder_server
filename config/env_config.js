@@ -1,6 +1,5 @@
 module.exports = {
   SERVER_PORT: process.env.SERVER_PORT,
-  DB_URL: Process.env.DB_URL,
   DB_NAME: process.env.DB_NAME,
   DOMAIN_BASE_URL: process.env.DOMAIN_BASE_URL,
   SERVER_BASE_URL: process.env.SERVER_BASE_URL,
