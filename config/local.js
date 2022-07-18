@@ -1,5 +1,5 @@
 module.exports = {
-  SERVER_PORT: 5000,
+  PORT: 5000,
   DB_URL:
     "mongodb+srv://admin:admin@cluster0.5edpj.mongodb.net/serverFinderDB?retryWrites=true&w=majority",
   DOMAIN_BASE_URL: "http://localhost:3000",
