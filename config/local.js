@@ -1,6 +1,7 @@
 module.exports = {
   SERVER_PORT: 5000,
-  DB_URL: "mongodb://127.0.0.1/27017",
+  DB_URL:
+    "mongodb+srv://admin:admin@cluster0.5edpj.mongodb.net/serverFinderDB?retryWrites=true&w=majority",
   DB_NAME: "service_finder",
   DOMAIN_BASE_URL: "http://localhost:3000",
   SERVER_BASE_URL: "http://localhost:5000",
