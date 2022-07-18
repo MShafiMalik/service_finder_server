@@ -17,13 +17,8 @@ app.use(bodyParser.json());
 // Setup Cors
 app.use(cors());
 
-console.log(process.env.DB_URL);
-
 // DB Connection
 connectDB(DB_URL);
-// connectDB(
-//   "mongodb+srv://admin:admin@cluster0.5edpj.mongodb.net/serverFinderDB?retryWrites=true&w=majority"
-// );
 
 // Setting Routes
 app.get("/", (_req, res) => {
