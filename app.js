@@ -29,6 +29,6 @@ app.get("/", (_req, res) => {
 // app.use("/", webRoutes);
 // app.use("/api/", authRoutes);
 
-app.listen(SERVER_PORT, () => {
+app.listen(SERVER_PORT || 5000, () => {
   console.log(`App is listerning at http://localhost:${SERVER_PORT}`);
 });
