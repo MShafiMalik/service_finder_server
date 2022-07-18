@@ -7,7 +7,6 @@ const cors = require("cors");
 const connectDB = require("./database/db_connection/connect_db");
 const { DB_URL, PORT } = require("./config/keys");
 const authRoutes = require("./routes/authRoutes");
-const webRoutes = require("./routes/webRoutes");
 
 app.use(bodyParser.urlencoded({ extended: false }));
 
@@ -21,7 +20,6 @@ app.use(cors());
 connectDB(DB_URL);
 
 // Setting Routes
-app.use("/", webRoutes);
 app.use("/api/", authRoutes);
 
 app.listen(PORT, () => {
