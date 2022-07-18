@@ -4,8 +4,8 @@ const bodyParser = require("body-parser");
 const cors = require("cors");
 const connectDB = require("./database/db_connection/connect_db");
 const { DB_URL, SERVER_PORT } = require("./config/keys");
-const authRoutes = require("./routes/authRoutes");
-const webRoutes = require("./routes/webRoutes");
+// const authRoutes = require("./routes/authRoutes");
+// const webRoutes = require("./routes/webRoutes");
 
 app.use(bodyParser.urlencoded({ extended: false }));
 
