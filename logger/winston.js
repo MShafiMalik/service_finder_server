@@ -1,7 +1,7 @@
 const winston = require("winston");
 const path = require("path");
 require("winston-daily-rotate-file");
-const logsPath = path.join(__dirname, "../../", "servicefinder-logs");
+const logsPath = path.join(__dirname, "../", "servicefinder-logs");
 
 const infoOptions = {
   file: {
