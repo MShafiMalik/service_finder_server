@@ -9,9 +9,7 @@ const { DB_URL, SERVER_PORT } = require("./config/keys");
 // const authRoutes = require("./routes/authRoutes");
 // const webRoutes = require("./routes/webRoutes");
 
-app.enable("trust proxy");
-
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({ extended: true }));
 
 // JSON Setup
 app.use(bodyParser.json());
