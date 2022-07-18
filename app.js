@@ -19,8 +19,11 @@ app.use(cors());
 connectDB(DB_URL);
 
 // Setting Routes
-app.use("/", webRoutes);
-app.use("/api/", authRoutes);
+app.get("/", (_req, res) => {
+  res.send("Landing Page");
+});
+// app.use("/", webRoutes);
+// app.use("/api/", authRoutes);
 
 app.listen(SERVER_PORT, () => {
   console.log(`App is listerning at http://localhost:${SERVER_PORT}`);
