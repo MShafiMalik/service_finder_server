@@ -6,8 +6,8 @@ const bodyParser = require("body-parser");
 const cors = require("cors");
 const connectDB = require("./database/db_connection/connect_db");
 const { DB_URL, PORT } = require("./config/keys");
-// const authRoutes = require("./routes/authRoutes");
-// const webRoutes = require("./routes/webRoutes");
+const authRoutes = require("./routes/authRoutes");
+const webRoutes = require("./routes/webRoutes");
 
 app.use(bodyParser.urlencoded({ extended: false }));
 
@@ -21,11 +21,8 @@ app.use(cors());
 connectDB(DB_URL);
 
 // Setting Routes
-app.get("/", (_req, res) => {
-  res.send("Landing Page");
-});
-// app.use("/", webRoutes);
-// app.use("/api/", authRoutes);
+app.use("/", webRoutes);
+app.use("/api/", authRoutes);
 
 app.listen(PORT, () => {
   console.log(`App is listerning at http://localhost:${PORT}`);
