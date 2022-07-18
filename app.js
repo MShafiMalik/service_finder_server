@@ -9,7 +9,7 @@ const { DB_URL, SERVER_PORT } = require("./config/keys");
 // const authRoutes = require("./routes/authRoutes");
 // const webRoutes = require("./routes/webRoutes");
 
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.urlencoded({ extended: false }));
 
 // JSON Setup
 app.use(bodyParser.json());
@@ -29,6 +29,6 @@ app.get("/", (_req, res) => {
 // app.use("/", webRoutes);
 // app.use("/api/", authRoutes);
 
-app.listen(SERVER_PORT || 5000, () => {
+app.listen(SERVER_PORT, () => {
   console.log(`App is listerning at http://localhost:${SERVER_PORT}`);
 });
