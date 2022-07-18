@@ -18,7 +18,10 @@ app.use(bodyParser.json());
 app.use(cors());
 
 // DB Connection
-connectDB(DB_URL);
+// connectDB(DB_URL);
+connectDB(
+  "mongodb+srv://admin:admin@cluster0.5edpj.mongodb.net/serverFinderDB?retryWrites=true&w=majority"
+);
 
 // Setting Routes
 app.get("/", (_req, res) => {
