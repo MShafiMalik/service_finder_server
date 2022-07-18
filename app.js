@@ -17,6 +17,8 @@ app.use(bodyParser.json());
 // Setup Cors
 app.use(cors());
 
+console.log(DB_URL);
+
 // DB Connection
 connectDB(DB_URL);
 
