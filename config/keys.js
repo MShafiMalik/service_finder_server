@@ -1,11 +1,8 @@
-if (
-  process.env.NODE_ENV === "development" ||
-  process.env.NODE_ENV === "staging" ||
-  process.env.NODE_ENV === "production"
-) {
-  //we are in development environment, return keys accordingly
-  module.exports = require("./env_config.js");
-} else {
-  //we are in local environment, return keys accordingly
-  module.exports = require("./local.js");
-}
+module.exports = {
+  SERVER_PORT: process.env.SERVER_PORT,
+  DB_URL: process.env.DB_URL,
+  DOMAIN_BASE_URL: process.env.DOMAIN_BASE_URL,
+  SERVER_BASE_URL: process.env.SERVER_BASE_URL,
+  JWT_SECRET_KEY: process.env.JWT_SECRET_KEY,
+  URL_CRYPT_SECRET_KEY: process.env.URL_CRYPT_SECRET_KEY,
+};
