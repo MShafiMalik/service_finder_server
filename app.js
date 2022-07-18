@@ -3,7 +3,7 @@ const app = express();
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const connectDB = require("./database/db_connection/connect_db");
-const { DB_URL, DB_NAME, SERVER_PORT } = require("./config/keys");
+const { DB_URL, SERVER_PORT } = require("./config/keys");
 const authRoutes = require("./routes/authRoutes");
 const webRoutes = require("./routes/webRoutes");
 
@@ -16,7 +16,7 @@ app.use(bodyParser.json());
 app.use(cors());
 
 // DB Connection
-connectDB(DB_URL, DB_NAME);
+connectDB(DB_URL);
 
 // Setting Routes
 app.use("/", webRoutes);
