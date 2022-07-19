@@ -52,6 +52,7 @@ class AuthService {
           name: new_user.name,
           email: new_user.email,
           role: new_user.role,
+          activation_key: otp_key,
         };
         return successResponse(
           response,
@@ -100,7 +101,11 @@ class AuthService {
         const token = await generateJwtToken(userObj);
         const response = {
           Token: token,
-          Email: user.email,
+          User: {
+            name: user.name,
+            email: user.email,
+            role: user.role,
+          },
         };
         return successResponse(
           response,
