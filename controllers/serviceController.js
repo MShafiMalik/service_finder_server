@@ -1,18 +1,17 @@
-const categoryService = require("../services/categoryService");
+const serviceService = require("../services/serviceService");
+const ServiceService = new serviceService();
 const { constructResponse } = require("../utils/utility");
-const CategoryService = new categoryService();
 
-class CategoryController {
+class ServiceController {
   static getAll = async (_req, res) => {
-    const responseData = await CategoryService.getAll();
+    const responseData = await ServiceService.getAll();
     return constructResponse(res, responseData);
   };
 
   static add = async (req, res) => {
-    const { name } = req.body;
-    const responseData = await CategoryService.add(name);
+    const responseData = await ServiceService.add(req.body);
     return constructResponse(res, responseData);
   };
 }
 
-module.exports = CategoryController;
+module.exports = ServiceController;
