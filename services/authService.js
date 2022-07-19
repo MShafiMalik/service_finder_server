@@ -135,15 +135,25 @@ class AuthService {
         "This User Is Not Registered!"
       );
     }
-    const otp_obj = decryptData(key);
-    if (user.activation_key === otp_obj.key) {
-      user.is_active = true;
-      user.save();
-      return successResponse(
-        user,
-        HTTP_STATUS.OK,
-        "User Activated Successfully!"
-      );
+
+    try {
+      const otp_obj = await decryptData(key);
+      if (!otp_obj) {
+        return errorResponse(HTTP_STATUS.UNAUTHORIZED, "Invalid Key");
+      }
+      if (user.activation_key === otp_obj.key) {
+        user.is_active = true;
+        user.save();
+        return successResponse(
+          { User: user },
+          HTTP_STATUS.OK,
+          "User Activated Successfully!"
+        );
+      } else {
+        return errorResponse(HTTP_STATUS.UNAUTHORIZED, "Invalid Key");
+      }
+    } catch (error) {
+      return errorResponse(HTTP_STATUS.UNAUTHORIZED, error.message);
     }
   }
 }

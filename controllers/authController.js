@@ -26,6 +26,7 @@ class AuthController {
   static verify_email = async (req, res) => {
     const { email, key } = req.body;
     const responseData = await AuthService.verify_email(email, key);
+    console.log("Response Data", responseData);
     return constructResponse(res, responseData);
   };
 }
