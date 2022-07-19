@@ -15,8 +15,8 @@ const {
 const UserModel = require("../database/models/users");
 
 class AuthService {
-  async signup(name, email, password, password_confirmation, role) {
-    if (name && email && password && password_confirmation && role) {
+  async signup(name, email, password, password_confirmation, role, image) {
+    if (name && email && password && password_confirmation && role && image) {
       const user = await UserModel.findOne({ email: email });
       if (user) {
         return errorResponse(
@@ -39,6 +39,7 @@ class AuthService {
           email: email,
           password: hash_pass,
           role: role,
+          image: image,
           is_active: false,
           activation_key: getRandomNumber(100000, 999999),
         });
@@ -52,6 +53,7 @@ class AuthService {
           name: new_user.name,
           email: new_user.email,
           role: new_user.role,
+          image: image,
           activation_key: otp_key,
         };
         return successResponse(

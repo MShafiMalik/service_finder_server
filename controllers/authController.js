@@ -4,13 +4,15 @@ const { constructResponse } = require("../utils/utility");
 
 class AuthController {
   static signup = async (req, res) => {
-    const { name, email, password, password_confirmation, role } = req.body;
+    const { name, email, password, password_confirmation, role, image } =
+      req.body;
     const responseData = await AuthService.signup(
       name,
       email,
       password,
       password_confirmation,
-      role
+      role,
+      image
     );
     return constructResponse(res, responseData);
   };

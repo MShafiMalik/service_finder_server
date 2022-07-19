@@ -1,13 +1,12 @@
 const express = require("express");
 const router = express.Router();
-const CheckAuthToken = require("../middlewares/checkAuthToken");
 const AuthController = require("../controllers/authController");
 const validateApiRequest = require("../controllers/validations/validateRequest");
 const authValidation = require("../controllers/validations/authValidations");
 const userRole = require("../middlewares/userRole");
 
 router.post(
-  "/auth/signup",
+  "/signup",
   authValidation.signupValidations(),
   validateApiRequest,
   userRole(),
@@ -15,14 +14,14 @@ router.post(
 );
 
 router.post(
-  "/auth/login",
+  "/login",
   authValidation.loginValidations(),
   validateApiRequest,
   AuthController.login
 );
 
 router.post(
-  "/auth/verify-email",
+  "/verify-email",
   authValidation.verifyEmailValidations(),
   validateApiRequest,
   AuthController.verify_email

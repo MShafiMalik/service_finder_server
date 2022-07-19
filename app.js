@@ -7,6 +7,7 @@ const cors = require("cors");
 const connectDB = require("./database/db_connection/connect_db");
 const { DB_URL, PORT } = require("./config/keys");
 const authRoutes = require("./routes/authRoutes");
+const categoryRoutes = require("./routes/categoryRoutes");
 
 app.use(bodyParser.urlencoded({ extended: false }));
 
@@ -20,7 +21,8 @@ app.use(cors());
 connectDB(DB_URL);
 
 // Setting Routes
-app.use("/api/", authRoutes);
+app.use("/api/auth/", authRoutes);
+app.use("/api/category/", categoryRoutes);
 
 app.listen(PORT, () => {
   console.log(`App is listerning at http://localhost:${PORT}`);
