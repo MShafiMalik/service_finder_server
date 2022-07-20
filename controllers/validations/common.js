@@ -1,10 +1,5 @@
 const _ = require("lodash");
-const {
-  check,
-  validationResult,
-  checkSchema,
-  oneOf,
-} = require("express-validator");
+const { check, validationResult, checkSchema } = require("express-validator");
 const commonRegex = /^[a-zA-Z0-9\s!()?'\"\“\-@#&$%*=+/,.\\]{3,50}$/;
 const passwordRegex =
   /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d#?!@$%^&*_-]{8,20}$/;
@@ -12,8 +7,6 @@ const organizationNameRegex = commonRegex;
 const contactNameRegex = /^[a-zA-Z -']{3,50}$/;
 const insurerNameRegex = commonRegex;
 const insurerTypeRegex = commonRegex;
-const locationRegex =
-  /^([Gg][Ii][Rr] 0[Aa]{2})|((([A-Za-z][0-9]{1,2})|(([A-Za-z][A-Ha-hJ-Yj-y][0-9]{1,2})|(([A-Za-z][0-9][A-Za-z])|([A-Za-z][A-Ha-hJ-Yj-y][0-9]?[A-Za-z])))) [0-9][A-Za-z]{2})$/;
 const accreditationTypeRegex = commonRegex;
 const registrationNumberRegex = commonRegex;
 const {
@@ -22,11 +15,67 @@ const {
   PAGE_SIZE,
   VALID_FILE_TYPES,
 } = require("../../utils/constants");
-const { awsKeys } = require("../../config/config");
 const { decryptData } = require("../../utils/utility");
 
 const validateRequest = (request) => {
   return validationResult(request);
+};
+
+const emailValidations = (paramName = "email") => {
+  return [
+    check(paramName).trim().isEmail().withMessage("Invalid email address"),
+  ];
+};
+
+const firstnameValidations = (paramName = "firstname") => {
+  return isRequiredValidations(paramName);
+};
+const lastnameValidations = (paramName = "lastname") => {
+  return isRequiredValidations(paramName);
+};
+
+const imageValidations = (paramName = "image") => {
+  return isRequiredValidations(paramName);
+};
+
+const descriptionValidations = (paramName = "description") => {
+  return isRequiredValidations(paramName);
+};
+
+const cityValidations = (paramName = "city") => {
+  return isRequiredValidations(paramName);
+};
+
+const stateValidations = (paramName = "state") => {
+  return isRequiredValidations(paramName);
+};
+const countryValidations = (paramName = "country") => {
+  return isRequiredValidations(paramName);
+};
+
+const isRequiredValidations = (param) => {
+  return [
+    check(param)
+      .trim()
+      .notEmpty({
+        ignore_whitespace: true,
+      })
+      .withMessage(`${param} field is required`),
+  ];
+};
+
+const roleValidations = (paramName = "role") => {
+  return [
+    check(paramName)
+      .trim()
+      .custom((value) => {
+        if (value !== "Seller" && value !== "Buyer") {
+          return Promise.resolve();
+        } else {
+          return Promise.reject("Role should be Seller or Buyer");
+        }
+      }),
+  ];
 };
 
 const organizationNamesValidations = (paramName = "organizationName") => {
@@ -70,37 +119,6 @@ const urlValidations = (paramName = "url") => {
   ];
 };
 
-const emailValidations = (paramName = "email") => {
-  return [
-    check(paramName).trim().isEmail().withMessage("Invalid email address"),
-  ];
-};
-
-const nameValidations = (paramName = "name") => {
-  return [
-    check(paramName)
-      .trim()
-      .notEmpty({
-        ignore_whitespace: true,
-      })
-      .withMessage(`${paramName} field is required`),
-  ];
-};
-
-const roleValidations = (paramName = "role") => {
-  return [
-    check(paramName)
-      .trim()
-      .custom((value) => {
-        if (value !== "seller" && value !== "buyer") {
-          return Promise.resolve();
-        } else {
-          return Promise.reject("Role should be Seller or Buyer");
-        }
-      }),
-  ];
-};
-
 const providerRequestStatusValidations = (
   paramName = "providerRequestStatus",
   errorMsg = null
@@ -126,9 +144,9 @@ const phoneNumberValidations = (paramName = "phone") => {
       .trim()
       .optional({ nullable: true, checkFalsy: true })
       .isLength({ min: 3, max: 12 })
-      .withMessage("Length should be 3 to 12 in phone number")
-      .isNumeric()
-      .withMessage(`Please enter valid phone number.`),
+      .withMessage("Length should be 3 to 12 in phone number"),
+    // .isNumeric()
+    // .withMessage(`Please enter valid phone number.`),
   ];
 };
 
@@ -447,85 +465,6 @@ const passwordValidations = (paramName = "password") => {
   ];
 };
 
-const fileNameValidation = (paramName = "fileName", validFileTypes = []) => {
-  return [
-    check(paramName)
-      .notEmpty()
-      .withMessage(`${paramName} is required`)
-      .isLength({ min: 17, max: 18 })
-      .withMessage("Length should be in between 17 to 18")
-      .custom((value, { _req }) => {
-        const fileNameArray = value.split(".");
-        if (fileNameArray.length === 2) {
-          if (fileNameArray[0].length != 13) {
-            throw new Error(`Invalid ${paramName}.`);
-          }
-          const isNameInt =
-            !isNaN(fileNameArray[0]) &&
-            parseInt(Number(fileNameArray[0])) == fileNameArray[0] &&
-            !isNaN(parseInt(fileNameArray[0], 10));
-          if (!isNameInt) {
-            throw new Error(`Invalid ${paramName}`);
-          }
-          const type = fileNameArray[1];
-          if (validFileTypes.indexOf(type) == -1) {
-            throw new Error(`Invalid ${paramName} type`);
-          }
-        } else throw new Error(`Invalid ${paramName}.`);
-        return true;
-      }),
-  ];
-};
-
-const fileNameOrUrl = (
-  paramName = "fileName",
-  validFileTypes = [],
-  required = true
-) => {
-  let isRequired = null;
-  if (required)
-    isRequired = check(paramName)
-      .notEmpty()
-      .withMessage(`${paramName} is required`);
-  else
-    isRequired = check(paramName).optional({
-      nullable: true,
-      checkFalsy: true,
-    });
-  return [
-    isRequired.custom((value) => {
-      if (value.length !== 18 && value.length !== 17) {
-        if (value.indexOf(awsKeys.s3.bucketName) > -1) return true;
-        throw new Error(`Invalid ${paramName}.`);
-      }
-
-      const fileNameArray = value.split(".");
-      if (fileNameArray.length === 2) {
-        if (fileNameArray[0].length != 13) {
-          throw new Error(`Invalid ${paramName}.`);
-        }
-        const isNameInt =
-          !isNaN(fileNameArray[0]) &&
-          parseInt(Number(fileNameArray[0])) == fileNameArray[0] &&
-          !isNaN(parseInt(fileNameArray[0], 10));
-        if (!isNameInt) {
-          throw new Error(`Invalid ${paramName}`);
-        }
-        const type = fileNameArray[1];
-        if (validFileTypes.indexOf(type) == -1) {
-          throw new Error(`Invalid file type`);
-        }
-      } else throw new Error(`Invalid ${paramName}.`);
-      return true;
-    }),
-  ];
-};
-
-const oneOfValidations = (array, message = "") => {
-  //https://express-validator.github.io/docs/check-api.html#oneofvalidationchains-message
-  return oneOf(array, message);
-};
-
 // this will concatenate all array into one array
 const concatValidations = (...arraysOfArray) => {
   return [].concat(arraysOfArray);
@@ -534,7 +473,8 @@ const concatValidations = (...arraysOfArray) => {
 module.exports = {
   validateRequest,
   concatValidations,
-  nameValidations,
+  firstnameValidations,
+  lastnameValidations,
   roleValidations,
   emailValidations,
   passwordValidations,
@@ -548,17 +488,14 @@ module.exports = {
   pageNumberValidations,
   fileTypeValidations,
   stringDateValidations,
-  fileNameValidation,
   requiredParamValidation,
   compareOriginalFileName,
   arrayValidations,
-  oneOfValidations,
   nationwideValidation,
   insurerNameValidation,
   insuranceTypeValidation,
   integerValidation,
   booleanValidation,
-  fileNameOrUrl,
   aboutValidations,
   urlValidations,
   accreditationRegistrationNumber,
@@ -566,4 +503,10 @@ module.exports = {
   shouldBeAnArray,
   exampleTypeValidations,
   conversationMessageValidations,
+  isRequiredValidations,
+  imageValidations,
+  descriptionValidations,
+  cityValidations,
+  stateValidations,
+  countryValidations,
 };

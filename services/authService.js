@@ -10,13 +10,30 @@ const {
   getRandomNumber,
   encryptData,
   decryptData,
+  convertToCapitalize,
 } = require("../utils/utility");
 
 const UserModel = require("../database/models/users");
+const userRole = require("../middlewares/userRole");
 
 class AuthService {
-  async signup(name, email, password, password_confirmation, role, image) {
-    if (name && email && password && password_confirmation && role && image) {
+  async signup(
+    firstname,
+    lastname,
+    email,
+    password,
+    password_confirmation,
+    role
+  ) {
+    if (
+      firstname &&
+      lastname &&
+      email &&
+      password &&
+      password_confirmation &&
+      role
+    ) {
+      role = convertToCapitalize(role);
       const user = await UserModel.findOne({ email: email });
       if (user) {
         return errorResponse(
@@ -24,22 +41,20 @@ class AuthService {
           "Already Have an account please SignIn"
         );
       }
-
       if (password !== password_confirmation) {
         return errorResponse(
           HTTP_STATUS.CONFLICT,
           "Password and Confirm Password doesn't match"
         );
       }
-
       try {
         const hash_pass = await generatePasswordHash(password);
         const new_user = new UserModel({
-          name: name,
+          firstname: firstname,
+          lastname: lastname,
           email: email,
           password: hash_pass,
           role: role,
-          image: image,
           is_active: false,
           activation_key: getRandomNumber(100000, 999999),
         });
@@ -50,10 +65,10 @@ class AuthService {
         const otp_key = encryptData(otp_obj);
         console.log(otp_key);
         const response = {
-          name: new_user.name,
+          firstname: new_user.firstname,
+          lastname: new_user.lastname,
           email: new_user.email,
           role: new_user.role,
-          image: image,
           activation_key: otp_key,
         };
         return successResponse(
@@ -75,6 +90,33 @@ class AuthService {
         "All Fields Are Required!"
       );
     }
+  }
+
+  async resend_activation_key(email) {
+    const user = await UserModel.findOne({ email: email });
+    if (!user) {
+      return errorResponse(
+        HTTP_STATUS.UNAUTHORIZED,
+        "This User Is Not Registered!"
+      );
+    }
+    const otp_obj = {
+      key: user.activation_key,
+    };
+    const otp_key = encryptData(otp_obj);
+    console.log(otp_key);
+    const response = {
+      firstname: user.firstname,
+      lastname: user.lastname,
+      email: user.email,
+      role: user.role,
+      activation_key: otp_key,
+    };
+    return successResponse(
+      response,
+      HTTP_STATUS.OK,
+      "Activation Key Sent Successfully!"
+    );
   }
 
   async login(email, password) {
@@ -135,26 +177,93 @@ class AuthService {
         "This User Is Not Registered!"
       );
     }
-
-    try {
-      const otp_obj = await decryptData(key);
-      if (!otp_obj) {
-        return errorResponse(HTTP_STATUS.UNAUTHORIZED, "Invalid Key");
-      }
-      if (user.activation_key === otp_obj.key) {
-        user.is_active = true;
-        user.save();
-        return successResponse(
-          { User: user },
-          HTTP_STATUS.OK,
-          "User Activated Successfully!"
-        );
-      } else {
-        return errorResponse(HTTP_STATUS.UNAUTHORIZED, "Invalid Key");
-      }
-    } catch (error) {
-      return errorResponse(HTTP_STATUS.UNAUTHORIZED, error.message);
+    if (user.is_active === true) {
+      return errorResponse(
+        HTTP_STATUS.UNAUTHORIZED,
+        "This User Is Already Registered!"
+      );
     }
+    const otp_obj = await decryptData(key);
+    if (!otp_obj) {
+      return errorResponse(HTTP_STATUS.UNAUTHORIZED, "Invalid Key");
+    }
+    if (user.activation_key === otp_obj.key) {
+      user.is_active = true;
+      await user.save();
+      return successResponse(
+        { User: user },
+        HTTP_STATUS.OK,
+        "User Activated Successfully!"
+      );
+    } else {
+      return errorResponse(HTTP_STATUS.UNAUTHORIZED, "Invalid Key");
+    }
+  }
+
+  async reset_password(email, password) {
+    const user = await UserModel.findOne({ email: email });
+    if (!user) {
+      return errorResponse(
+        HTTP_STATUS.UNAUTHORIZED,
+        "This User Is Not Registered!"
+      );
+    }
+    const hash_pass = await generatePasswordHash(password);
+    user.password = hash_pass;
+    await user.save();
+    const response = {
+      firstname: user.firstname,
+      lastname: user.lastname,
+      email: user.email,
+      role: user.role,
+    };
+    return successResponse(
+      response,
+      HTTP_STATUS.OK,
+      "Password Updated Successfully!"
+    );
+  }
+
+  async add_personal_info(
+    email,
+    phone,
+    image,
+    description,
+    city,
+    state,
+    country
+  ) {
+    const user = await UserModel.findOne({ email: email });
+    if (!user) {
+      return errorResponse(
+        HTTP_STATUS.UNAUTHORIZED,
+        "This User Is Not Registered!"
+      );
+    }
+    user.phone = phone;
+    user.image = image;
+    user.description = description;
+    user.city = city;
+    user.state = state;
+    user.country = country;
+    await user.save();
+    const response = {
+      firstname: user.firstname,
+      lastname: user.lastname,
+      email: user.email,
+      phone: user.phone,
+      image: user.image,
+      city: user.city,
+      state: user.state,
+      country: user.country,
+      description: user.description,
+      role: user.role,
+    };
+    return successResponse(
+      response,
+      HTTP_STATUS.OK,
+      "Password Updated Successfully!"
+    );
   }
 }
 

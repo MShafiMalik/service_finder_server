@@ -8,7 +8,6 @@ const connectDB = require("./database/db_connection/connect_db");
 const { DB_URL, PORT } = require("./config/keys");
 const authRoutes = require("./routes/authRoutes");
 const categoryRoutes = require("./routes/categoryRoutes");
-const sellerRoutes = require("./routes/sellerRoutes");
 const serviceRoutes = require("./routes/serviceRoutes");
 
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -25,7 +24,6 @@ connectDB(DB_URL);
 // Setting Routes
 app.use("/api/auth/", authRoutes);
 app.use("/api/category/", categoryRoutes);
-app.use("/api/seller/", sellerRoutes);
 app.use("/api/service/", serviceRoutes);
 
 app.listen(PORT, () => {

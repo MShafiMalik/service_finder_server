@@ -5,4 +5,10 @@ module.exports = {
   SERVER_BASE_URL: process.env.SERVER_BASE_URL,
   JWT_SECRET_KEY: process.env.JWT_SECRET_KEY,
   URL_CRYPT_SECRET_KEY: process.env.URL_CRYPT_SECRET_KEY,
+  logs: {
+    debugLevel: "",
+    enableLogs: true,
+    enableGrayLog: true,
+    enableWinstonLog: false,
+  },
 };

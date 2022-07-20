@@ -1,11 +1,13 @@
 const common = require("./common");
 
 const signupValidations = () => {
-  const nameValidation = common.nameValidations();
+  const firstnameValidation = common.firstnameValidations();
+  const lastnameValidation = common.lastnameValidations();
   const emailValidation = common.emailValidations();
   const passwordValidation = common.passwordValidations();
   return common.concatValidations(
-    nameValidation,
+    firstnameValidation,
+    lastnameValidation,
     emailValidation,
     passwordValidation
   );
@@ -28,9 +30,28 @@ const forgotPasswordValidations = () => {
 };
 
 const resetPasswordValidations = () => {
-  const tokenValidation = common.emailVerificationTokenValidations();
+  const emailValidation = common.emailValidations();
   const passwordValidation = common.passwordValidations();
-  return common.concatValidations(passwordValidation, tokenValidation);
+  return common.concatValidations(passwordValidation, emailValidation);
+};
+
+const personalInfoValidations = () => {
+  const emailValidation = common.emailValidations();
+  const phoneValidation = common.phoneNumberValidations();
+  const imageValidation = common.imageValidations();
+  const descriptionValidation = common.descriptionValidations();
+  const cityValidation = common.cityValidations();
+  const stateValidation = common.stateValidations();
+  const countryValidation = common.countryValidations();
+  return common.concatValidations(
+    emailValidation,
+    phoneValidation,
+    imageValidation,
+    descriptionValidation,
+    cityValidation,
+    stateValidation,
+    countryValidation
+  );
 };
 
 module.exports = {
@@ -39,4 +60,5 @@ module.exports = {
   loginValidations,
   forgotPasswordValidations,
   resetPasswordValidations,
+  personalInfoValidations,
 };

@@ -1,10 +1,10 @@
 const CategoryModel = require("../database/models/categories");
 const { HTTP_STATUS } = require("../utils/constants");
-const { successResponse, errorResponse } = require("../utils/utility");
-
-const capitalize = (word) => {
-  return word[0].toUpperCase() + word.substring(1).toLowerCase();
-};
+const {
+  successResponse,
+  errorResponse,
+  convertToCapitalize,
+} = require("../utils/utility");
 
 class CategoryService {
   async getAll() {
@@ -20,7 +20,7 @@ class CategoryService {
     if (!name) {
       return errorResponse(HTTP_STATUS.NOT_FOUND, "Category Name Is Required!");
     }
-    name = capitalize(name);
+    name = convertToCapitalize(name);
     const old_category = await CategoryModel.findOne({ name: name });
     if (old_category) {
       return errorResponse(

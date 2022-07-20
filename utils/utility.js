@@ -138,6 +138,10 @@ const decryptData = (encryptedString) => {
   }
 };
 
+const convertToCapitalize = (word) => {
+  return word[0].toUpperCase() + word.substring(1).toLowerCase();
+};
+
 module.exports = {
   generatePasswordHash,
   generateJwtToken,
@@ -150,4 +154,5 @@ module.exports = {
   getRandomNumber,
   encryptData,
   decryptData,
+  convertToCapitalize,
 };

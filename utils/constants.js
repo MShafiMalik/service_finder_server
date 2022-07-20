@@ -1,7 +1,7 @@
 const ROLE_TYPES = {
-  ADMIN: "admin",
-  SELLER: "seller",
-  BUYER: "buyer",
+  ADMIN: "Admin",
+  SELLER: "Seller",
+  BUYER: "Buyer",
 };
 
 const LOGGER_TAGS = {
