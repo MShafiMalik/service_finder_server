@@ -59,17 +59,13 @@ class AuthService {
           activation_key: getRandomNumber(100000, 999999),
         });
         await new_user.save();
-        const otp_obj = {
-          key: new_user.activation_key,
-        };
-        const otp_key = encryptData(otp_obj);
-        console.log(otp_key);
+        console.log(new_user.activation_key);
         const response = {
           firstname: new_user.firstname,
           lastname: new_user.lastname,
           email: new_user.email,
           role: new_user.role,
-          activation_key: otp_key,
+          activation_key: new_user.activation_key,
         };
         return successResponse(
           response,
@@ -100,17 +96,13 @@ class AuthService {
         "This User Is Not Registered!"
       );
     }
-    const otp_obj = {
-      key: user.activation_key,
-    };
-    const otp_key = encryptData(otp_obj);
-    console.log(otp_key);
+    console.log(user.activation_key);
     const response = {
       firstname: user.firstname,
       lastname: user.lastname,
       email: user.email,
       role: user.role,
-      activation_key: otp_key,
+      activation_key: user.activation_key,
     };
     return successResponse(
       response,
@@ -183,11 +175,7 @@ class AuthService {
         "This User Is Already Registered!"
       );
     }
-    const otp_obj = await decryptData(key);
-    if (!otp_obj) {
-      return errorResponse(HTTP_STATUS.UNAUTHORIZED, "Invalid Key");
-    }
-    if (user.activation_key === otp_obj.key) {
+    if (user.activation_key === parseInt(key)) {
       user.is_active = true;
       await user.save();
       return successResponse(
