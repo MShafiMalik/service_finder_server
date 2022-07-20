@@ -169,12 +169,6 @@ class AuthService {
         "This User Is Not Registered!"
       );
     }
-    if (user.is_active === true) {
-      return errorResponse(
-        HTTP_STATUS.UNAUTHORIZED,
-        "This User Is Already Registered!"
-      );
-    }
     if (user.activation_key === parseInt(key)) {
       user.is_active = true;
       await user.save();
