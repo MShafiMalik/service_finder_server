@@ -8,13 +8,10 @@ const {
   generateJwtToken,
   generatePasswordHash,
   getRandomNumber,
-  encryptData,
-  decryptData,
   convertToCapitalize,
 } = require("../utils/utility");
 
 const UserModel = require("../database/models/users");
-const userRole = require("../middlewares/userRole");
 
 class AuthService {
   async signup(
@@ -96,7 +93,9 @@ class AuthService {
         "This User Is Not Registered!"
       );
     }
-    console.log(user.activation_key);
+    user.activation_key = getRandomNumber(100000, 999999);
+    user.key_expire_time = new Date();
+    await user.save();
     const response = {
       firstname: user.firstname,
       lastname: user.lastname,
@@ -129,11 +128,8 @@ class AuthService {
       const isMatch = await bcrypt.compare(password, user.password);
       if (isMatch) {
         const userObj = {
-          id: user._id,
-          email: user.email,
-          role: user.role,
+          user_id: user._id,
         };
-
         const token = await generateJwtToken(userObj);
         const response = {
           Token: token,
@@ -168,6 +164,12 @@ class AuthService {
         HTTP_STATUS.UNAUTHORIZED,
         "This User Is Not Registered!"
       );
+    }
+    const current_timestamp = new Date().getTime();
+    const key_expire_timetamp = user.key_expire_time.getTime();
+    const diff_timestamp = current_timestamp - key_expire_timetamp;
+    if (diff_timestamp > 60000) {
+      return errorResponse(HTTP_STATUS.UNAUTHORIZED, "OTP Is Expired!");
     }
     if (user.activation_key === parseInt(key)) {
       user.is_active = true;
