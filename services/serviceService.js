@@ -2,57 +2,6 @@ const ServiceModel = require("../database/models/services");
 const { HTTP_STATUS } = require("../utils/constants");
 const { errorResponse, successResponse } = require("../utils/utility");
 
-const create_service_obj = (req) => {
-  const {
-    title,
-    description,
-    category_id,
-    address,
-    latitude,
-    longitude,
-    radius,
-    packages,
-    images,
-    weekly_schedule,
-  } = req.body;
-
-  if (
-    !title ||
-    !description ||
-    !category_id ||
-    !address ||
-    !latitude ||
-    !longitude ||
-    !radius ||
-    !packages.basic.name ||
-    !packages.basic.description ||
-    !packages.basic.price ||
-    !packages.standard.name ||
-    !packages.standard.description ||
-    !packages.standard.price ||
-    !packages.premium.name ||
-    !packages.premium.description ||
-    !packages.premium.price ||
-    !Array.isArray(images) ||
-    images.length === 0
-  ) {
-    return "Null Fields";
-  }
-
-  return {
-    user_id: req.user._id,
-    category_id: category_id,
-    title: title,
-    description: description,
-    address: address,
-    latitude: latitude,
-    longitude: longitude,
-    radius: radius,
-    packages: packages,
-    images: images,
-    weekly_schedule: weekly_schedule,
-  };
-};
 class ServiceService {
   async getAll() {
     const services = await ServiceModel.find({});
@@ -66,12 +15,8 @@ class ServiceService {
         "This User Is Not A Seller!"
       );
     }
-    const service_obj = create_service_obj(req);
-    if (service_obj === "Null Fields") {
-      return errorResponse(HTTP_STATUS.CONFLICT, "All Fields Are Required!");
-    }
-
-    const service = new ServiceModel(service_obj);
+    const body = { user_id: req.user._id, ...req.body };
+    const service = new ServiceModel(body);
     await service.save();
     return successResponse(
       service,
@@ -88,12 +33,13 @@ class ServiceService {
       );
     }
     const { service_id } = req.body;
-    const service_obj = create_service_obj(req);
-    if (service_obj === "Null Fields" || !service_id) {
-      return errorResponse(HTTP_STATUS.CONFLICT, "All Fields Are Required!");
+    if (!service_id) {
+      return errorResponse(HTTP_STATUS.CONFLICT, "Service ID is required!");
     }
+    const body = { user_id: req.user._id, ...req.body };
+    delete body.service_id;
     await ServiceModel.findByIdAndUpdate(service_id, {
-      $set: service_obj,
+      $set: body,
     });
     const service = await ServiceModel.findById(service_id);
     return successResponse(
@@ -116,6 +62,10 @@ class ServiceService {
         HTTP_STATUS.CONFLICT,
         "Service ID Field Is Required!"
       );
+    }
+    const check_service = await ServiceModel.findById(service_id);
+    if (!check_service) {
+      return errorResponse(HTTP_STATUS.CONFLICT, "Invalid Service ID!");
     }
     const service = await ServiceModel.findByIdAndRemove(service_id);
     return successResponse(

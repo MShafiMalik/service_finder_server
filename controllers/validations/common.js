@@ -1,6 +1,8 @@
 const _ = require("lodash");
 const { check, validationResult } = require("express-validator");
 
+const time_regx = "^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$";
+
 const validateRequest = (request) => {
   return validationResult(request);
 };
@@ -179,23 +181,21 @@ const categoryIdValidations = (paramName = "category_id") => {
 };
 
 const coordinateValidations = (paramName, min, max) => {
-  return [
-    check(paramName)
-      .notEmpty()
-      .withMessage(`${paramName} Is Required`)
-      .isNumeric()
-      .withMessage(`${paramName} Is Not A Number`)
-      .isLength({ min: min, max: max })
-      .withMessage(`Length should be ${min} to ${max} in ${paramName}`)
-      .custom((value) => {
-        if (value < min || value > max) {
-          return Promise.reject(
-            `Length should be ${min} to ${max} in ${paramName}`
-          );
-        }
-        return Promise.resolve();
-      }),
-  ];
+  return check(paramName)
+    .notEmpty()
+    .withMessage(`${paramName} is required`)
+    .isNumeric()
+    .withMessage(`${paramName} shuold be a number`)
+    .isLength({ min: min, max: max })
+    .withMessage(`Length should be ${min} to ${max} in ${paramName}`)
+    .custom((value) => {
+      if (value < min || value > max) {
+        return Promise.reject(
+          `Length should be ${min} to ${max} in ${paramName}`
+        );
+      }
+      return Promise.resolve();
+    });
 };
 
 const latitudeValidations = (paramName = "latitude") => {
@@ -213,27 +213,46 @@ const addressValidations = (paramName = "address") => {
 const radiusValidations = (paramName = "radius") => {
   return check(paramName)
     .notEmpty()
-    .withMessage(`${paramName} Is Required`)
+    .withMessage(`${paramName} is required`)
     .isNumeric()
-    .withMessage(`${paramName} Is Not A Number`);
+    .withMessage(`${paramName} should be a number`);
 };
 
 const subPackageValidations = (pkg_value, pkg_name) => {
   if (typeof pkg_value !== "object" || pkg_value === null) {
-    return Promise.reject(`${pkg_name} Package Is Required`);
+    return {
+      status: "error",
+      message: `${pkg_name} package Is Required`,
+    };
   }
   if (!pkg_value.name) {
-    return Promise.reject(`Name of ${pkg_name} Package is required`);
+    return {
+      status: "error",
+      message: `Name of ${pkg_name} package Is Required`,
+    };
   }
   if (!pkg_value.description) {
-    return Promise.reject(`Description of ${pkg_name} Package is required`);
+    return {
+      status: "error",
+      message: `Description of ${pkg_name} package is required`,
+    };
   }
   if (!pkg_value.price) {
-    return Promise.reject(`Price of ${pkg_name} Package is required`);
+    return {
+      status: "error",
+      message: `Price of ${pkg_name} package is required`,
+    };
   }
   if (typeof pkg_value.price !== "number") {
-    return Promise.reject(`Price of ${pkg_name} Package is not a Number`);
+    return {
+      status: "error",
+      message: `Price of ${pkg_name} package should be a number`,
+    };
   }
+  return {
+    status: "success",
+    message: "",
+  };
 };
 
 const packagesValidations = (paramName = "packages") => {
@@ -241,7 +260,98 @@ const packagesValidations = (paramName = "packages") => {
     if (typeof value !== "object" || value === null) {
       return Promise.reject(`${paramName} Is Required`);
     }
-    return subPackageValidations(value.basic);
+    const basic_response = subPackageValidations(value.basic, "Basic");
+    if (basic_response.status === "error") {
+      return Promise.reject(basic_response.message);
+    }
+    const standard_response = subPackageValidations(value.standard, "Standard");
+    if (standard_response.status === "error") {
+      return Promise.reject(standard_response.message);
+    }
+    const premium_response = subPackageValidations(value.premium, "Premium");
+    if (premium_response.status === "error") {
+      return Promise.reject(premium_response.message);
+    }
+    return Promise.resolve();
+  });
+};
+
+const imagesValidations = (paramName = "images") => {
+  return check(paramName)
+    .isArray({ min: 1 })
+    .withMessage(`${paramName} should be an array with at least one item`);
+};
+
+const subWeeklyScheduleValidations = (day_value, day_name) => {
+  if (!day_value) {
+    return {
+      status: "error",
+      message: `${day_name} of weekly schedule is required`,
+    };
+  }
+  if (day_value === "off") {
+    return {
+      status: "success",
+      message: "",
+    };
+  }
+  if (typeof day_value !== "object") {
+    return {
+      status: "error",
+      message: `${day_name} of weekly schedule is invalid, It should be a valid start and end time or off!`,
+    };
+  }
+  if (!day_value.start.match(time_regx)) {
+    return {
+      status: "error",
+      message: `Incorrect from time of ${day_name}, It should be a valid time`,
+    };
+  }
+  if (!day_value.end) {
+    return {
+      status: "error",
+      message: `To time of ${day_name} of weekly schedule is required`,
+    };
+  }
+  return {
+    status: "success",
+    message: "",
+  };
+};
+
+const weeklyScheduleValidations = (paramName = "weekly_schedule") => {
+  return check(paramName).custom((value) => {
+    if (typeof value !== "object" || value === null) {
+      return Promise.reject(`${paramName} Is Required`);
+    }
+    const mon_response = subWeeklyScheduleValidations(value.mon, "Monday");
+    if (mon_response.status === "error") {
+      return Promise.reject(mon_response.message);
+    }
+    const tue_response = subWeeklyScheduleValidations(value.tue, "Tuesday");
+    if (tue_response.status === "error") {
+      return Promise.reject(tue_response.message);
+    }
+    const wed_response = subWeeklyScheduleValidations(value.wed, "Wednesday");
+    if (wed_response.status === "error") {
+      return Promise.reject(wed_response.message);
+    }
+    const thu_response = subWeeklyScheduleValidations(value.thu, "Thursday");
+    if (thu_response.status === "error") {
+      return Promise.reject(thu_response.message);
+    }
+    const fri_response = subWeeklyScheduleValidations(value.fri, "Friday");
+    if (fri_response.status === "error") {
+      return Promise.reject(fri_response.message);
+    }
+    const sat_response = subWeeklyScheduleValidations(value.sat, "Saturday");
+    if (sat_response.status === "error") {
+      return Promise.reject(sat_response.message);
+    }
+    const sun_response = subWeeklyScheduleValidations(value.sun, "Sunday");
+    if (sun_response.status === "error") {
+      return Promise.reject(sun_response.message);
+    }
     return Promise.resolve();
   });
 };
@@ -273,4 +383,6 @@ module.exports = {
   addressValidations,
   radiusValidations,
   packagesValidations,
+  imagesValidations,
+  weeklyScheduleValidations,
 };

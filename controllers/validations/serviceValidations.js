@@ -1,6 +1,6 @@
 const common = require("./common");
 
-const addServiceValidations = () => {
+const serviceValidations = () => {
   const titleValidation = common.titleValidations();
   const descriptionValidation = common.descriptionValidations();
   const categoryIdValidation = common.categoryIdValidations();
@@ -9,8 +9,8 @@ const addServiceValidations = () => {
   const addressValidation = common.addressValidations();
   const radiusValidation = common.radiusValidations();
   const packagesValidation = common.packagesValidations();
-  // const imagesValidation = imagesValidationFun();
-  // const weeklyScheduleValidation = weeklyScheduleValidationFun();
+  const imagesValidation = common.imagesValidations();
+  const weeklyScheduleValidation = common.weeklyScheduleValidations();
   return common.concatValidations(
     titleValidation,
     descriptionValidation,
@@ -19,10 +19,10 @@ const addServiceValidations = () => {
     longitudeValidation,
     addressValidation,
     radiusValidation,
-    packagesValidation
-    // imagesValidation,
-    // weeklyScheduleValidation
+    packagesValidation,
+    imagesValidation,
+    weeklyScheduleValidation
   );
 };
 
-module.exports = { addServiceValidations };
+module.exports = { serviceValidations };

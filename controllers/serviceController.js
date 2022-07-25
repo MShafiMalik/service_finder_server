@@ -9,9 +9,8 @@ class ServiceController {
   };
 
   static add = async (req, res) => {
-    res.send(req.body);
-    // const responseData = await ServiceService.add(req);
-    // return constructResponse(res, responseData);
+    const responseData = await ServiceService.add(req);
+    return constructResponse(res, responseData);
   };
 
   static update = async (req, res) => {

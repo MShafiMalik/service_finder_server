@@ -28,34 +28,41 @@ const serviceSchema = new mongoose.Schema({
   },
   images: [{ type: String, required: true, trim: true }],
   weekly_schedule: {
-    mon: {
-      from: { type: String, required: true, trim: true },
-      to: { type: String, required: true, trim: true },
-    },
-    tue: {
-      from: { type: String, required: true, trim: true },
-      to: { type: String, required: true, trim: true },
-    },
-    wed: {
-      from: { type: String, required: true, trim: true },
-      to: { type: String, required: true, trim: true },
-    },
-    thu: {
-      from: { type: String, required: true, trim: true },
-      to: { type: String, required: true, trim: true },
-    },
-    fri: {
-      from: { type: String, required: true, trim: true },
-      to: { type: String, required: true, trim: true },
-    },
-    sat: {
-      from: { type: String, required: true, trim: true },
-      to: { type: String, required: true, trim: true },
-    },
-    sun: {
-      from: { type: String, required: true, trim: true },
-      to: { type: String, required: true, trim: true },
-    },
+    mon:
+      {
+        start: { type: String, required: true, trim: true },
+        end: { type: String, required: true, trim: true },
+      } | { type: String, required: true, trim: true },
+    tue:
+      {
+        start: { type: String, required: true, trim: true },
+        end: { type: String, required: true, trim: true },
+      } | { type: String, required: true, trim: true },
+    wed:
+      {
+        start: { type: String, required: true, trim: true },
+        end: { type: String, required: true, trim: true },
+      } | { type: String, required: true, trim: true },
+    thu:
+      {
+        start: { type: String, required: true, trim: true },
+        end: { type: String, required: true, trim: true },
+      } | { type: String, required: true, trim: true },
+    fri:
+      {
+        start: { type: String, required: true, trim: true },
+        end: { type: String, required: true, trim: true },
+      } | { type: String, required: true, trim: true },
+    sat:
+      {
+        start: { type: String, required: true, trim: true },
+        end: { type: String, required: true, trim: true },
+      } | { type: String, required: true, trim: true },
+    sun:
+      {
+        start: { type: String, required: true, trim: true },
+        end: { type: String, required: true, trim: true },
+      } | { type: String, required: true, trim: true },
   },
 });
 

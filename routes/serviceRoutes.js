@@ -10,11 +10,17 @@ router.get("/all", ServiceController.getAll);
 router.post(
   "/add",
   CheckAuthToken,
-  serviceValidations.addServiceValidations(),
+  serviceValidations.serviceValidations(),
   validateApiRequest,
   ServiceController.add
 );
-router.post("/update", CheckAuthToken, ServiceController.update);
+router.post(
+  "/update",
+  CheckAuthToken,
+  serviceValidations.serviceValidations(),
+  validateApiRequest,
+  ServiceController.update
+);
 router.post("/delete", CheckAuthToken, ServiceController.delete);
 
 module.exports = router;
