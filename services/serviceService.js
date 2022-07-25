@@ -11,16 +11,9 @@ const create_service_obj = (req) => {
     latitude,
     longitude,
     radius,
-    basic_pkg_name,
-    basic_pkg_description,
-    basic_pkg_price,
-    standard_pkg_name,
-    standard_pkg_description,
-    standard_pkg_price,
-    premium_pkg_name,
-    premium_pkg_description,
-    premium_pkg_price,
+    packages,
     images,
+    weekly_schedule,
   } = req.body;
 
   if (
@@ -31,15 +24,15 @@ const create_service_obj = (req) => {
     !latitude ||
     !longitude ||
     !radius ||
-    !basic_pkg_name ||
-    !basic_pkg_description ||
-    !basic_pkg_price ||
-    !standard_pkg_name ||
-    !standard_pkg_description ||
-    !standard_pkg_price ||
-    !premium_pkg_name ||
-    !premium_pkg_description ||
-    !premium_pkg_price ||
+    !packages.basic.name ||
+    !packages.basic.description ||
+    !packages.basic.price ||
+    !packages.standard.name ||
+    !packages.standard.description ||
+    !packages.standard.price ||
+    !packages.premium.name ||
+    !packages.premium.description ||
+    !packages.premium.price ||
     !Array.isArray(images) ||
     images.length === 0
   ) {
@@ -55,24 +48,9 @@ const create_service_obj = (req) => {
     latitude: latitude,
     longitude: longitude,
     radius: radius,
-    packages: {
-      basic: {
-        name: basic_pkg_name,
-        description: basic_pkg_description,
-        price: basic_pkg_price,
-      },
-      standatd: {
-        name: standard_pkg_name,
-        description: standard_pkg_description,
-        price: standard_pkg_price,
-      },
-      premium: {
-        name: premium_pkg_name,
-        description: premium_pkg_description,
-        price: premium_pkg_price,
-      },
-    },
+    packages: packages,
     images: images,
+    weekly_schedule: weekly_schedule,
   };
 };
 class ServiceService {
@@ -92,6 +70,7 @@ class ServiceService {
     if (service_obj === "Null Fields") {
       return errorResponse(HTTP_STATUS.CONFLICT, "All Fields Are Required!");
     }
+
     const service = new ServiceModel(service_obj);
     await service.save();
     return successResponse(

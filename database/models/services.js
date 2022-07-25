@@ -15,7 +15,7 @@ const serviceSchema = new mongoose.Schema({
       description: { type: String, required: true, trim: true },
       price: { type: Number, required: true, trim: true },
     },
-    standatd: {
+    standard: {
       name: { type: String, required: true, trim: true },
       description: { type: String, required: true, trim: true },
       price: { type: Number, required: true, trim: true },
@@ -27,6 +27,36 @@ const serviceSchema = new mongoose.Schema({
     },
   },
   images: [{ type: String, required: true, trim: true }],
+  weekly_schedule: {
+    mon: {
+      from: { type: String, required: true, trim: true },
+      to: { type: String, required: true, trim: true },
+    },
+    tue: {
+      from: { type: String, required: true, trim: true },
+      to: { type: String, required: true, trim: true },
+    },
+    wed: {
+      from: { type: String, required: true, trim: true },
+      to: { type: String, required: true, trim: true },
+    },
+    thu: {
+      from: { type: String, required: true, trim: true },
+      to: { type: String, required: true, trim: true },
+    },
+    fri: {
+      from: { type: String, required: true, trim: true },
+      to: { type: String, required: true, trim: true },
+    },
+    sat: {
+      from: { type: String, required: true, trim: true },
+      to: { type: String, required: true, trim: true },
+    },
+    sun: {
+      from: { type: String, required: true, trim: true },
+      to: { type: String, required: true, trim: true },
+    },
+  },
 });
 
 const ServiceModel = mongoose.model("services", serviceSchema);

@@ -9,11 +9,7 @@ const {
 class CategoryService {
   async getAll() {
     const categories = await CategoryModel.find({});
-    return successResponse(
-      categories,
-      HTTP_STATUS.OK,
-      "Category Created Successfully!"
-    );
+    return successResponse(categories, HTTP_STATUS.OK, "");
   }
 
   async add(name) {
