@@ -9,7 +9,7 @@ const CheckAuthToken = async (req, res, next) => {
     try {
       const token = authorization.split(" ")[1];
       const user_id = await utility.getUserIdFromJwtToken(token);
-      req.user = await UserModel.findById(user_id).select("-password");
+      req.user = await UserModel.findById(user_id);
       return next();
     } catch (error) {
       responseData = utility.errorResponse(

@@ -57,15 +57,12 @@ class AuthService {
         });
         await new_user.save();
         console.log(new_user.activation_key);
-        const response = {
-          firstname: new_user.firstname,
-          lastname: new_user.lastname,
-          email: new_user.email,
-          role: new_user.role,
-          activation_key: new_user.activation_key,
-        };
+        const updated_user = await UserModel.findById(new_user._id).select([
+          "-password",
+          "-key_expire_time",
+        ]);
         return successResponse(
-          response,
+          updated_user,
           HTTP_STATUS.OK,
           "User Created Successfully!"
         );
@@ -96,15 +93,12 @@ class AuthService {
     user.activation_key = getRandomNumber(100000, 999999);
     user.key_expire_time = new Date();
     await user.save();
-    const response = {
-      firstname: user.firstname,
-      lastname: user.lastname,
-      email: user.email,
-      role: user.role,
-      activation_key: user.activation_key,
-    };
+    const updated_user = await UserModel.findById(user._id).select([
+      "-password",
+      "-key_expire_time",
+    ]);
     return successResponse(
-      response,
+      updated_user,
       HTTP_STATUS.OK,
       "Activation Key Sent Successfully!"
     );
@@ -174,8 +168,13 @@ class AuthService {
     if (user.activation_key === parseInt(key)) {
       user.is_active = true;
       await user.save();
+      const updated_user = await UserModel.findById(user._id).select([
+        "-password",
+        "-activation_key",
+        "-key_expire_time",
+      ]);
       return successResponse(
-        { User: user },
+        updated_user,
         HTTP_STATUS.OK,
         "User Activated Successfully!"
       );
@@ -195,14 +194,33 @@ class AuthService {
     const hash_pass = await generatePasswordHash(password);
     user.password = hash_pass;
     await user.save();
-    const response = {
-      firstname: user.firstname,
-      lastname: user.lastname,
-      email: user.email,
-      role: user.role,
-    };
+    const updated_user = await UserModel.findById(user._id).select([
+      "-password",
+      "-activation_key",
+      "-key_expire_time",
+    ]);
     return successResponse(
-      response,
+      updated_user,
+      HTTP_STATUS.OK,
+      "Password Updated Successfully!"
+    );
+  }
+
+  async change_password(user, old_password, new_password) {
+    const isMatch = await bcrypt.compare(old_password, user.password);
+    if (!isMatch) {
+      return errorResponse(HTTP_STATUS.UNAUTHORIZED, "Old Password Is Invalid");
+    }
+    const hash_pass = await generatePasswordHash(new_password);
+    user.password = hash_pass;
+    await user.save();
+    const updated_user = await UserModel.findById(user._id).select([
+      "-password",
+      "-activation_key",
+      "-key_expire_time",
+    ]);
+    return successResponse(
+      updated_user,
       HTTP_STATUS.OK,
       "Password Updated Successfully!"
     );
@@ -231,22 +249,49 @@ class AuthService {
     user.state = state;
     user.country = country;
     await user.save();
-    const response = {
-      firstname: user.firstname,
-      lastname: user.lastname,
-      email: user.email,
-      phone: user.phone,
-      image: user.image,
-      city: user.city,
-      state: user.state,
-      country: user.country,
-      description: user.description,
-      role: user.role,
-    };
+    const updated_user = await UserModel.findById(user._id).select([
+      "-password",
+      "-activation_key",
+      "-key_expire_time",
+    ]);
     return successResponse(
-      response,
+      updated_user,
       HTTP_STATUS.OK,
       "Password Updated Successfully!"
+    );
+  }
+
+  async update_profile(user, body) {
+    const {
+      firstname,
+      lastname,
+      email,
+      phone,
+      image,
+      description,
+      city,
+      state,
+      country,
+    } = body;
+    user.firstname = firstname;
+    user.lastname = lastname;
+    user.email = email;
+    user.phone = phone;
+    user.image = image;
+    user.description = description;
+    user.city = city;
+    user.state = state;
+    user.country = country;
+    await user.save();
+    const updated_user = await UserModel.findById(user._id).select([
+      "-password",
+      "-activation_key",
+      "-key_expire_time",
+    ]);
+    return successResponse(
+      updated_user,
+      HTTP_STATUS.OK,
+      "Profile Updated Successfully!"
     );
   }
 }

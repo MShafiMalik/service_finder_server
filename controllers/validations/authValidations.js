@@ -35,6 +35,12 @@ const resetPasswordValidations = () => {
   return common.concatValidations(passwordValidation, emailValidation);
 };
 
+const changePasswordValidations = () => {
+  const oldPasswordValidation = common.oldPasswordValidations();
+  const newPasswordValidation = common.newPasswordValidations();
+  return common.concatValidations(oldPasswordValidation, newPasswordValidation);
+};
+
 const personalInfoValidations = () => {
   const emailValidation = common.emailValidations();
   const phoneValidation = common.phoneNumberValidations();
@@ -54,11 +60,36 @@ const personalInfoValidations = () => {
   );
 };
 
+const updateProfileValidations = () => {
+  const firstnameValidation = common.firstnameValidations();
+  const lastnameValidation = common.lastnameValidations();
+  const emailValidation = common.emailValidations();
+  const phoneValidation = common.phoneNumberValidations();
+  const imageValidation = common.imageValidations();
+  const descriptionValidation = common.descriptionValidations();
+  const cityValidation = common.cityValidations();
+  const stateValidation = common.stateValidations();
+  const countryValidation = common.countryValidations();
+  return common.concatValidations(
+    firstnameValidation,
+    lastnameValidation,
+    emailValidation,
+    phoneValidation,
+    imageValidation,
+    descriptionValidation,
+    cityValidation,
+    stateValidation,
+    countryValidation
+  );
+};
+
 module.exports = {
   signupValidations,
   verifyEmailValidations,
   loginValidations,
   forgotPasswordValidations,
   resetPasswordValidations,
+  changePasswordValidations,
   personalInfoValidations,
+  updateProfileValidations,
 };

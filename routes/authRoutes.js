@@ -5,6 +5,7 @@ const validateApiRequest = require("../controllers/validations/validateRequest")
 const authValidation = require("../controllers/validations/authValidations");
 const userRole = require("../middlewares/userRole");
 const UserModel = require("../database/models/users");
+const CheckAuthToken = require("../middlewares/checkAuthToken");
 
 router.post(
   "/signup",
@@ -50,10 +51,26 @@ router.post(
 );
 
 router.post(
+  "/change-password",
+  CheckAuthToken,
+  authValidation.changePasswordValidations(),
+  validateApiRequest,
+  AuthController.change_password
+);
+
+router.post(
   "/add-personal-info",
   authValidation.personalInfoValidations(),
   validateApiRequest,
   AuthController.add_personal_info
+);
+
+router.post(
+  "/update-profile",
+  CheckAuthToken,
+  authValidation.updateProfileValidations(),
+  validateApiRequest,
+  AuthController.updateProfile
 );
 
 router.post("/del-user", async (req, res) => {

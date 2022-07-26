@@ -48,6 +48,16 @@ class AuthController {
     return constructResponse(res, responseData);
   };
 
+  static change_password = async (req, res) => {
+    const { old_password, new_password } = req.body;
+    const responseData = await AuthService.change_password(
+      req.user,
+      old_password,
+      new_password
+    );
+    return constructResponse(res, responseData);
+  };
+
   static add_personal_info = async (req, res) => {
     const { email, phone, image, description, city, state, country } = req.body;
     const responseData = await AuthService.add_personal_info(
@@ -59,6 +69,11 @@ class AuthController {
       state,
       country
     );
+    return constructResponse(res, responseData);
+  };
+
+  static updateProfile = async (req, res) => {
+    const responseData = await AuthService.update_profile(req.user, req.body);
     return constructResponse(res, responseData);
   };
 }

@@ -87,11 +87,10 @@ const phoneNumberValidations = (paramName = "phone") => {
   return [
     check(paramName)
       .trim()
-      .optional({ nullable: true, checkFalsy: true })
+      .notEmpty()
+      .withMessage(`${paramName} field is required`)
       .isLength({ min: 3, max: 12 })
       .withMessage("Length should be 3 to 12 in phone number"),
-    // .isNumeric()
-    // .withMessage(`Please enter valid phone number.`),
   ];
 };
 
@@ -158,14 +157,24 @@ const booleanValidation = (paramName = "isActive") => {
   ];
 };
 
+const commonPasswordValidations = (paramName) => {
+  return check(paramName)
+    .notEmpty()
+    .withMessage(`${paramName} field is required`)
+    .isLength({ min: 8, max: 15 })
+    .withMessage(`Password length should be in between 8 to 15`);
+};
+
 const passwordValidations = (paramName = "password") => {
-  return [
-    check(paramName)
-      .isLength({ min: 8, max: 15 })
-      .withMessage(`Password length should be in between 8 to 15`),
-    // .matches(passwordRegex)
-    // .withMessage(`Please enter valid ${paramName} format`),
-  ];
+  return commonPasswordValidations(paramName);
+};
+
+const oldPasswordValidations = (paramName = "old_password") => {
+  return commonPasswordValidations(paramName);
+};
+
+const newPasswordValidations = (paramName = "new_password") => {
+  return commonPasswordValidations(paramName);
 };
 
 // this will concatenate all array into one array
@@ -364,6 +373,8 @@ module.exports = {
   roleValidations,
   emailValidations,
   passwordValidations,
+  oldPasswordValidations,
+  newPasswordValidations,
   phoneNumberValidations,
   stringDateValidations,
   integerValidation,
