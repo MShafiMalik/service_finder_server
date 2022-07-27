@@ -125,13 +125,15 @@ class AuthService {
           user_id: user._id,
         };
         const token = await generateJwtToken(userObj);
+        let updated_user = await UserModel.findById(user._id).select([
+          "-password",
+          "-activation_key",
+          "-key_expire_time",
+        ]);
+
         const response = {
-          Token: token,
-          User: {
-            name: user.name,
-            email: user.email,
-            role: user.role,
-          },
+          user: updated_user,
+          token: token,
         };
         return successResponse(
           response,
