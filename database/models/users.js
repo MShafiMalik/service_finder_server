@@ -15,6 +15,7 @@ const userSchema = new mongoose.Schema({
   is_active: { type: Boolean, required: true },
   activation_key: { type: Number, required: true },
   key_expire_time: { type: Date, default: Date.now },
+  status: { type: String, default: "Idle" },
 });
 
 const UserModel = mongoose.model("users", userSchema);
