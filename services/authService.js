@@ -175,8 +175,12 @@ class AuthService {
         "-activation_key",
         "-key_expire_time",
       ]);
+      const userObj = {
+        user_id: updated_user._id,
+      };
+      const token = await generateJwtToken(userObj);
       return successResponse(
-        updated_user,
+        { user: updated_user, token: token },
         HTTP_STATUS.OK,
         "User Activated Successfully!"
       );

@@ -3,6 +3,8 @@ const { check, validationResult } = require("express-validator");
 
 const time_regx = "^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$";
 
+const checkForHexRegExp = "^[0-9a-fA-F]{24}$";
+
 const validateRequest = (request) => {
   return validationResult(request);
 };
@@ -365,23 +367,42 @@ const weeklyScheduleValidations = (paramName = "weekly_schedule") => {
   });
 };
 
+const mongodbIdValidation = (paramName) => {
+  return check(paramName)
+    .notEmpty()
+    .withMessage(`${paramName} is required`)
+    .custom((value) => {
+      if (!value.match(checkForHexRegExp)) {
+        return Promise.reject(`Invalid ${paramName}`);
+      }
+      return Promise.resolve();
+    });
+};
+
 const sellerUserIdValidations = (paramName = "seller_user_id") => {
-  return isRequiredValidations(paramName);
+  return mongodbIdValidation(paramName);
 };
 const serviceIdValidations = (paramName = "service_id") => {
-  return isRequiredValidations(paramName);
+  return mongodbIdValidation(paramName);
 };
 const workStartDatetimeValidations = (paramName = "work_start_datetime") => {
   return isRequiredValidations(paramName);
 };
 const bookingIdValidations = (paramName = "booking_id") => {
-  return isRequiredValidations(paramName);
+  return mongodbIdValidation(paramName);
 };
 
 const ratingValidations = (paramName = "rating") => {
   return coordinateValidations(paramName, 0, 5);
 };
 const reviewValidations = (paramName = "review") => {
+  return isRequiredValidations(paramName);
+};
+
+const receiverUserIdValidations = (paramName = "receiver_user_id") => {
+  return mongodbIdValidation(paramName);
+};
+const messageTextValidations = (paramName = "message_text") => {
   return isRequiredValidations(paramName);
 };
 
@@ -422,4 +443,6 @@ module.exports = {
   bookingIdValidations,
   ratingValidations,
   reviewValidations,
+  receiverUserIdValidations,
+  messageTextValidations,
 };
