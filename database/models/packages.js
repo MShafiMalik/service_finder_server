@@ -11,6 +11,7 @@ const packageSchema = new mongoose.Schema({
   premium_pkg_name: { type: String, required: true, trim: true },
   premium_pkg_description: { type: String, required: true, trim: true },
   premium_pkg_price: { type: Number, required: true, trim: true },
+  created_at: { type: Date, required: true, trim: true, default: Date.now() },
 });
 
 const PackageModel = mongoose.model("packages", packageSchema);

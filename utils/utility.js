@@ -118,6 +118,7 @@ const logBadRequestAndResponse = (
     errors: errors.array({
       onlyFirstError: true,
     }),
+    success: false,
   });
 };
 

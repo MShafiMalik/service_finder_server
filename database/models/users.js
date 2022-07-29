@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const { SELLER_STATUS } = require("../../utils/constants");
 
 const userSchema = new mongoose.Schema({
   firstname: { type: String, required: true, trim: true },
@@ -15,7 +16,8 @@ const userSchema = new mongoose.Schema({
   is_active: { type: Boolean, required: true },
   activation_key: { type: Number, required: true },
   key_expire_time: { type: Date, default: Date.now },
-  status: { type: String, default: "Idle" },
+  status: { type: String, default: SELLER_STATUS.IDLE },
+  created_at: { type: Date, required: true, trim: true, default: Date.now() },
 });
 
 const UserModel = mongoose.model("users", userSchema);

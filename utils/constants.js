@@ -4,6 +4,24 @@ const ROLE_TYPES = {
   BUYER: "Buyer",
 };
 
+const SELLER_STATUS = {
+  IDLE: "Idle",
+  BUSY: "Busy",
+};
+
+const BOOKING_STATUS = {
+  CREATED: "Created",
+  ACCEPTED: "Accepted",
+  DENIED: "Denied",
+  STARTED: "Started",
+  SUBMITED: "Submited",
+  COMPLETED: "Completed",
+  DISPUTED_BY_BUYER: "Disputed By Buyer",
+  DISPUTED_BY_SELLER: "Disputed By Seller",
+  DISPUTE_DENIED: "Dispute Denied",
+  CANCELLED: "Cancelled",
+};
+
 const LOGGER_TAGS = {
   FOOTPRINT: "footprint",
   BAD_REQUEST: "badrequest",
@@ -80,7 +98,9 @@ const HTTP_STATUS = {
 
 module.exports = {
   ROLE_TYPES,
+  SELLER_STATUS,
   LOGGER_TAGS,
   DB_USER_STATUS,
   HTTP_STATUS,
+  BOOKING_STATUS,
 };

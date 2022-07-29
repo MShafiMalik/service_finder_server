@@ -365,6 +365,26 @@ const weeklyScheduleValidations = (paramName = "weekly_schedule") => {
   });
 };
 
+const sellerUserIdValidations = (paramName = "seller_user_id") => {
+  return isRequiredValidations(paramName);
+};
+const serviceIdValidations = (paramName = "service_id") => {
+  return isRequiredValidations(paramName);
+};
+const workStartDatetimeValidations = (paramName = "work_start_datetime") => {
+  return isRequiredValidations(paramName);
+};
+const bookingIdValidations = (paramName = "booking_id") => {
+  return isRequiredValidations(paramName);
+};
+
+const ratingValidations = (paramName = "rating") => {
+  return coordinateValidations(paramName, 0, 5);
+};
+const reviewValidations = (paramName = "review") => {
+  return isRequiredValidations(paramName);
+};
+
 module.exports = {
   validateRequest,
   concatValidations,
@@ -396,4 +416,10 @@ module.exports = {
   packagesValidations,
   imagesValidations,
   weeklyScheduleValidations,
+  sellerUserIdValidations,
+  serviceIdValidations,
+  workStartDatetimeValidations,
+  bookingIdValidations,
+  ratingValidations,
+  reviewValidations,
 };
