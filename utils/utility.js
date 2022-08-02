@@ -139,8 +139,13 @@ const decryptData = (encryptedString) => {
   }
 };
 
-const convertToCapitalize = (word) => {
-  return word[0].toUpperCase() + word.substring(1).toLowerCase();
+const convertToCapitalize = (str) => {
+  const str_arr = str.trim().split(" ");
+  let new_str = "";
+  str_arr.forEach((word) => {
+    new_str += word[0].toUpperCase() + word.substring(1).toLowerCase() + " ";
+  });
+  return new_str.trim();
 };
 
 module.exports = {

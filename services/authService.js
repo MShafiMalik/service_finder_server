@@ -263,7 +263,7 @@ class AuthService {
     return successResponse(
       updated_user,
       HTTP_STATUS.OK,
-      "Password Updated Successfully!"
+      "Personal Info Added Successfully!"
     );
   }
 

@@ -187,7 +187,7 @@ const concatValidations = (...arraysOfArray) => {
 const titleValidations = (paramName = "title") => {
   return isRequiredValidations(paramName);
 };
-const categoryIdValidations = (paramName = "category_id") => {
+const categoryIdValidations = (paramName = "category") => {
   return isRequiredValidations(paramName);
 };
 
