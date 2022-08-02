@@ -12,9 +12,9 @@ class CategoryService {
     return successResponse(categories, HTTP_STATUS.OK, "");
   }
 
-  async add(name) {
-    if (!name) {
-      return errorResponse(HTTP_STATUS.NOT_FOUND, "Category Name Is Required!");
+  async add(name, image) {
+    if (!name || !image) {
+      return errorResponse(HTTP_STATUS.NOT_FOUND, "All Fields Are Required!");
     }
     name = convertToCapitalize(name);
     const old_category = await CategoryModel.findOne({ name: name });
@@ -26,13 +26,11 @@ class CategoryService {
     }
     const category = new CategoryModel({
       name: name,
+      image: image,
     });
     await category.save();
-    const response = {
-      name: category.name,
-    };
     return successResponse(
-      response,
+      category,
       HTTP_STATUS.OK,
       "Category Created Successfully!"
     );

@@ -62,11 +62,17 @@ router.post(
 );
 
 router.post(
-  "/cancel",
+  "/dispute-accept",
   CheckAuthToken,
   bookingValidations.bookingIdValidations(),
   validateApiRequest,
-  BookingController.cancel
+  BookingController.dispute_accept
+);
+
+router.get(
+  "/get-pending-all",
+  CheckAuthToken,
+  BookingController.get_pending_all
 );
 
 router.get("/get-active-all", CheckAuthToken, BookingController.get_active_all);

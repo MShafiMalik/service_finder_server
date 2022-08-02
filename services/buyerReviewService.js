@@ -16,33 +16,33 @@ class BuyerReviewService {
         "Only Buyer Can Add Review!"
       );
     }
-    const seller_user = await UserModel.findById(seller_user_id);
-    if (seller_user.role !== ROLE_TYPES.SELLER) {
+    const db_seller_user = await UserModel.findById(seller_user_id);
+    if (db_seller_user.role !== ROLE_TYPES.SELLER) {
       return errorResponse(
         HTTP_STATUS.UNAUTHORIZED,
         "Only Seller Can Receive Review!"
       );
     }
     const is_duplicate = await BuyerReviewModel.find({
-      seller_user_id: seller_user_id,
-      buyer_user_id: user._id,
-      booking_id: booking_id,
+      seller_user: seller_user_id,
+      buyer_user: user._id,
+      booking: booking_id,
     });
     if (is_duplicate.length > 0) {
       return errorResponse(HTTP_STATUS.CONFLICT, "This Review Already Added!");
     }
     const booking = await BookingModel.findOne({
       _id: booking_id,
-      seller_user_id: seller_user_id,
-      buyer_user_id: user._id,
+      seller_user: seller_user_id,
+      buyer_user: user._id,
     });
     if (!booking) {
       return errorResponse(HTTP_STATUS.NOT_FOUND, "No Booking Found!");
     }
     const buyer_review = new BuyerReviewModel({
-      seller_user_id: seller_user_id,
-      buyer_user_id: user._id,
-      booking_id: booking_id,
+      seller_user: seller_user_id,
+      buyer_user: user._id,
+      booking: booking_id,
       rating: rating,
       review: review,
     });
@@ -66,8 +66,23 @@ class BuyerReviewService {
       );
     }
     const buyer_reviews = await BuyerReviewModel.find({
-      seller_user_id: user._id,
-    });
+      seller_user: user._id,
+    })
+      .populate({
+        path: "buyer_user",
+        model: "User",
+        select: "-password -__v",
+      })
+      .populate({
+        path: "seller_user",
+        model: "User",
+        select: "-password -__v",
+      })
+      .populate({
+        path: "booking",
+        model: "Booking",
+        select: "-__v",
+      });
     return successResponse(
       buyer_reviews,
       HTTP_STATUS.OK,

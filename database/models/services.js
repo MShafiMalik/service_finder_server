@@ -1,8 +1,16 @@
 const mongoose = require("mongoose");
 
 const serviceSchema = new mongoose.Schema({
-  user_id: { type: String, required: true, trim: true },
-  category_id: { type: String, required: true, trim: true },
+  seller_user: {
+    type: mongoose.Schema.Types.ObjectId,
+    required: true,
+    ref: "User",
+  },
+  category: {
+    type: mongoose.Schema.Types.ObjectId,
+    required: true,
+    ref: "Category",
+  },
   title: { type: String, required: true, trim: true },
   description: { type: String, required: true, trim: true },
   address: { type: String, required: true, trim: true },
@@ -67,6 +75,6 @@ const serviceSchema = new mongoose.Schema({
   created_at: { type: Date, required: true, trim: true, default: Date.now() },
 });
 
-const ServiceModel = mongoose.model("services", serviceSchema);
+const ServiceModel = mongoose.model("Service", serviceSchema, "services");
 
 module.exports = ServiceModel;

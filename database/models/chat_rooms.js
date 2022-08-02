@@ -1,12 +1,12 @@
 const mongoose = require("mongoose");
 
 const chatRoomSchema = new mongoose.Schema({
-  user1_id: {
+  user1: {
     type: mongoose.Schema.Types.ObjectId,
     required: true,
     ref: "User",
   },
-  user2_id: {
+  user2: {
     type: mongoose.Schema.Types.ObjectId,
     required: true,
     ref: "User",
@@ -14,6 +14,6 @@ const chatRoomSchema = new mongoose.Schema({
   created_at: { type: Date, default: Date.now() },
 });
 
-const ChatRoomModel = mongoose.model("chat_rooms", chatRoomSchema);
+const ChatRoomModel = mongoose.model("ChatRoom", chatRoomSchema, "chat_rooms");
 
 module.exports = ChatRoomModel;

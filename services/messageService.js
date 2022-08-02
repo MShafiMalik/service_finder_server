@@ -13,31 +13,31 @@ class MessageService {
     }
     let chat_room = await ChatRoomModel.findOne({
       $or: [
-        { user1_id: user._id, user2_id: receiver_user._id },
-        { user1_id: receiver_user._id, user2_id: user._id },
+        { user1: user._id, user2: receiver_user._id },
+        { user1: receiver_user._id, user2: user._id },
       ],
     })
       .populate({
-        path: "user1_id",
+        path: "user1",
         Model: "User",
         select: "-password -__v",
       })
       .populate({
-        path: "user2_id",
+        path: "user2",
         Model: "User",
         select: "-password -__v",
       });
     if (!chat_room) {
       chat_room = new ChatRoomModel({
-        user1_id: user._id,
-        user2_id: receiver_user._id,
+        user1: user._id,
+        user2: receiver_user._id,
       });
       await chat_room.save();
     }
     const message = new MessageModel({
-      chat_room_id: chat_room._id,
-      sender_user_id: user._id,
-      receiver_user_id: receiver_user._id,
+      chat_room: chat_room._id,
+      sender_user: user._id,
+      receiver_user: receiver_user._id,
       message: message_text,
     });
     await message.save();
@@ -55,28 +55,40 @@ class MessageService {
     }
     let chat_room = await ChatRoomModel.findOne({
       $or: [
-        { user1_id: user._id, user2_id: receiver_user._id },
-        { user1_id: receiver_user._id, user2_id: user._id },
+        { user1: user._id, user2: receiver_user._id },
+        { user1: receiver_user._id, user2: user._id },
       ],
     });
     if (!chat_room) {
       return errorResponse(HTTP_STATUS.NOT_FOUND, "Receiver User Not Found!");
     }
-    const messages = await MessageModel.find({ chat_room_id: chat_room._id });
-    return successResponse(messages, HTTP_STATUS.OK);
-  }
-
-  async get_chat_rooms(user) {
-    let chat_rooms = await ChatRoomModel.find({
-      $or: [{ user1_id: user._id }, { user2_id: user._id }],
-    })
+    const messages = await MessageModel.find({ chat_room: chat_room._id })
       .populate({
-        path: "user1_id",
+        path: "sender_user",
         Model: "User",
         select: "-password -__v",
       })
       .populate({
-        path: "user2_id",
+        path: "receiver_user",
+        Model: "User",
+        select: "-password -__v",
+      })
+      .select("-chat_room");
+    return successResponse(messages, HTTP_STATUS.OK);
+  }
+
+  async get_chat_rooms(user) {
+    console.log(user);
+    let chat_rooms = await ChatRoomModel.find({
+      $or: [{ user1: user._id }, { user2: user._id }],
+    })
+      .populate({
+        path: "user1",
+        Model: "User",
+        select: "-password -__v",
+      })
+      .populate({
+        path: "user2",
         Model: "User",
         select: "-password -__v",
       });

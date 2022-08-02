@@ -4,7 +4,17 @@ const { errorResponse, successResponse } = require("../utils/utility");
 
 class ServiceService {
   async getAll() {
-    const services = await ServiceModel.find({});
+    const services = await ServiceModel.find({})
+      .populate({
+        path: "seller_user",
+        Model: "User",
+        select: "-password -__v",
+      })
+      .populate({
+        path: "category",
+        Model: "Category",
+        select: "-__v",
+      });
     return successResponse(services, HTTP_STATUS.OK);
   }
 
@@ -15,7 +25,7 @@ class ServiceService {
         "This User Is Not A Seller!"
       );
     }
-    const body = { user_id: req.user._id, ...req.body };
+    const body = { seller_user: req.user._id, ...req.body };
     const service = new ServiceModel(body);
     await service.save();
     return successResponse(
@@ -36,7 +46,7 @@ class ServiceService {
     if (!service_id) {
       return errorResponse(HTTP_STATUS.CONFLICT, "Service ID is required!");
     }
-    const body = { user_id: req.user._id, ...req.body };
+    const body = { seller_user: req.user._id, ...req.body };
     delete body.service_id;
     await ServiceModel.findByIdAndUpdate(service_id, {
       $set: body,

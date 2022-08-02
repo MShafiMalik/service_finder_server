@@ -9,8 +9,17 @@ const CheckAuthToken = async (req, res, next) => {
     try {
       const token = authorization.split(" ")[1];
       const user_id = await utility.getUserIdFromJwtToken(token);
-      req.user = await UserModel.findById(user_id);
-      return next();
+      const user = await UserModel.findById(user_id);
+      if (user) {
+        req.user = user;
+        return next();
+      } else {
+        responseData = utility.errorResponse(
+          HTTP_STATUS.FORBIDDEN,
+          "Unauthorized User, No Token, Please Login..."
+        );
+        return utility.constructResponse(res, responseData);
+      }
     } catch (error) {
       responseData = utility.errorResponse(
         HTTP_STATUS.FORBIDDEN,

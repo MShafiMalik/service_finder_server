@@ -20,9 +20,9 @@ class BookingService {
     }
     const { seller_user_id, service_id, work_start_datetime } = req.body;
     const is_duplicate = await BookingModel.find({
-      seller_user_id: seller_user_id,
-      buyer_user_id: req.user._id,
-      service_id: service_id,
+      seller_user: seller_user_id,
+      buyer_user: req.user._id,
+      service: service_id,
       status: {
         $nin: [
           BOOKING_STATUS.COMPLETED,
@@ -38,9 +38,9 @@ class BookingService {
       );
     }
     const booking = new BookingModel({
-      seller_user_id: seller_user_id,
-      buyer_user_id: req.user._id,
-      service_id: service_id,
+      seller_user: seller_user_id,
+      buyer_user: req.user._id,
+      service: service_id,
       work_start_datetime: work_start_datetime,
     });
     await booking.save();
@@ -190,12 +190,12 @@ class BookingService {
     }
     if (
       user.role === ROLE_TYPES.BUYER &&
-      booking.status !== BOOKING_STATUS.DISPUTED_BY_SELLER
+      booking.status === BOOKING_STATUS.DISPUTED_BY_SELLER
     ) {
       booking.status = BOOKING_STATUS.ACCEPTED;
     } else if (
       user.role === ROLE_TYPES.SELLER &&
-      booking.status !== BOOKING_STATUS.DISPUTED_BY_BUYER
+      booking.status === BOOKING_STATUS.DISPUTED_BY_BUYER
     ) {
       booking.status = BOOKING_STATUS.ACCEPTED;
     } else {
@@ -212,7 +212,7 @@ class BookingService {
     );
   }
 
-  async cancel(user, booking_id) {
+  async dispute_accept(user, booking_id) {
     const booking = await BookingModel.findById(booking_id);
     if (!booking) {
       return errorResponse(HTTP_STATUS.NOT_FOUND, "Booking Not Found!");
@@ -225,12 +225,12 @@ class BookingService {
     }
     if (
       user.role === ROLE_TYPES.BUYER &&
-      booking.status !== BOOKING_STATUS.DISPUTED_BY_SELLER
+      booking.status === BOOKING_STATUS.DISPUTED_BY_SELLER
     ) {
       booking.status = BOOKING_STATUS.CANCELLED;
     } else if (
       user.role === ROLE_TYPES.SELLER &&
-      booking.status !== BOOKING_STATUS.DISPUTED_BY_BUYER
+      booking.status === BOOKING_STATUS.DISPUTED_BY_BUYER
     ) {
       booking.status = BOOKING_STATUS.CANCELLED;
     } else {
@@ -247,6 +247,35 @@ class BookingService {
     );
   }
 
+  async get_pending_all(user) {
+    if (user.role !== ROLE_TYPES.SELLER) {
+      return errorResponse(
+        HTTP_STATUS.UNAUTHORIZED,
+        "Only Seller Can Get Bookings!"
+      );
+    }
+    const bookings = await BookingModel.find({
+      seller_user: user._id,
+      status: BOOKING_STATUS.CREATED,
+    })
+      .populate({
+        path: "seller_user",
+        Model: "User",
+        select: "-__v",
+      })
+      .populate({
+        path: "buyer_user",
+        Model: "User",
+        select: "-__v",
+      })
+      .populate({
+        path: "service",
+        Model: "Service",
+        select: "-__v",
+      });
+    return successResponse(bookings, HTTP_STATUS.OK);
+  }
+
   async get_active_all(user) {
     if (user.role !== ROLE_TYPES.SELLER) {
       return errorResponse(
@@ -255,9 +284,24 @@ class BookingService {
       );
     }
     const bookings = await BookingModel.find({
-      seller_user_id: user._id,
+      seller_user: user._id,
       status: BOOKING_STATUS.ACCEPTED,
-    });
+    })
+      .populate({
+        path: "seller_user",
+        Model: "User",
+        select: "-__v",
+      })
+      .populate({
+        path: "buyer_user",
+        Model: "User",
+        select: "-__v",
+      })
+      .populate({
+        path: "service",
+        Model: "Service",
+        select: "-__v",
+      });
     return successResponse(bookings, HTTP_STATUS.OK);
   }
 
@@ -269,9 +313,24 @@ class BookingService {
       );
     }
     const bookings = await BookingModel.find({
-      seller_user_id: user._id,
+      seller_user: user._id,
       status: BOOKING_STATUS.COMPLETED,
-    });
+    })
+      .populate({
+        path: "seller_user",
+        Model: "User",
+        select: "-__v",
+      })
+      .populate({
+        path: "buyer_user",
+        Model: "User",
+        select: "-__v",
+      })
+      .populate({
+        path: "service",
+        Model: "Service",
+        select: "-__v",
+      });
     return successResponse(bookings, HTTP_STATUS.OK);
   }
 
@@ -283,9 +342,24 @@ class BookingService {
       );
     }
     const bookings = await BookingModel.find({
-      seller_user_id: user._id,
+      seller_user: user._id,
       status: BOOKING_STATUS.CANCELLED,
-    });
+    })
+      .populate({
+        path: "seller_user",
+        Model: "User",
+        select: "-__v",
+      })
+      .populate({
+        path: "buyer_user",
+        Model: "User",
+        select: "-__v",
+      })
+      .populate({
+        path: "service",
+        Model: "Service",
+        select: "-__v",
+      });
     return successResponse(bookings, HTTP_STATUS.OK);
   }
 }

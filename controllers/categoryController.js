@@ -9,8 +9,8 @@ class CategoryController {
   };
 
   static add = async (req, res) => {
-    const { name } = req.body;
-    const responseData = await CategoryService.add(name);
+    const { name, image } = req.body;
+    const responseData = await CategoryService.add(name, image);
     return constructResponse(res, responseData);
   };
 }

@@ -47,9 +47,17 @@ class BookingController {
     return constructResponse(res, responseData);
   };
 
-  static cancel = async (req, res) => {
+  static dispute_accept = async (req, res) => {
     const { booking_id } = req.body;
-    const responseData = await BookingService.cancel(req.user, booking_id);
+    const responseData = await BookingService.dispute_accept(
+      req.user,
+      booking_id
+    );
+    return constructResponse(res, responseData);
+  };
+
+  static get_pending_all = async (req, res) => {
+    const responseData = await BookingService.get_pending_all(req.user);
     return constructResponse(res, responseData);
   };
 
