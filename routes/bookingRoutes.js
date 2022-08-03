@@ -78,6 +78,12 @@ router.get(
 router.get("/get-active-all", CheckAuthToken, BookingController.get_active_all);
 
 router.get(
+  "/get-submitted-all",
+  CheckAuthToken,
+  BookingController.get_submitted_all
+);
+
+router.get(
   "/get-completed-all",
   CheckAuthToken,
   BookingController.get_completed_all

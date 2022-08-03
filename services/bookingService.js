@@ -153,13 +153,13 @@ class BookingService {
     if (booking.status !== BOOKING_STATUS.ACCEPTED) {
       return errorResponse(HTTP_STATUS.NOT_FOUND, "Invalid Booking!");
     }
-    booking.status = BOOKING_STATUS.SUBMITED;
+    booking.status = BOOKING_STATUS.SUBMITTED;
     booking.work_end_datetime = new Date();
     await booking.save();
     return successResponse(
       booking,
       HTTP_STATUS.OK,
-      "Booking Submited Successfully!"
+      "Booking Submitted Successfully!"
     );
   }
 
@@ -174,7 +174,7 @@ class BookingService {
     if (!booking) {
       return errorResponse(HTTP_STATUS.NOT_FOUND, "Booking Not Found!");
     }
-    if (booking.status !== BOOKING_STATUS.SUBMITED) {
+    if (booking.status !== BOOKING_STATUS.SUBMITTED) {
       return errorResponse(HTTP_STATUS.NOT_FOUND, "Invalid Booking!");
     }
     booking.status = BOOKING_STATUS.COMPLETED;
@@ -192,7 +192,7 @@ class BookingService {
       return errorResponse(HTTP_STATUS.NOT_FOUND, "Booking Not Found!");
     }
     if (
-      booking.status !== BOOKING_STATUS.SUBMITED &&
+      booking.status !== BOOKING_STATUS.SUBMITTED &&
       booking.status !== BOOKING_STATUS.ACCEPTED
     ) {
       return errorResponse(HTTP_STATUS.CONFLICT, "Invalid Booking!");
@@ -299,6 +299,18 @@ class BookingService {
 
   async get_active_all(user) {
     const bookings = await get_bookings(user, BOOKING_STATUS.ACCEPTED);
+    if (bookings.success === false) {
+      return errorResponse(
+        HTTP_STATUS.UNAUTHORIZED,
+        "Only Seller Or Buyer Can Get Bookings!"
+      );
+    } else {
+      return successResponse(bookings.data, HTTP_STATUS.OK);
+    }
+  }
+
+  async get_submitted_all(user) {
+    const bookings = await get_bookings(user, BOOKING_STATUS.SUBMITTED);
     if (bookings.success === false) {
       return errorResponse(
         HTTP_STATUS.UNAUTHORIZED,

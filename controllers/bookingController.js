@@ -66,6 +66,11 @@ class BookingController {
     return constructResponse(res, responseData);
   };
 
+  static get_submitted_all = async (req, res) => {
+    const responseData = await BookingService.get_submitted_all(req.user);
+    return constructResponse(res, responseData);
+  };
+
   static get_completed_all = async (req, res) => {
     const responseData = await BookingService.get_completed_all(req.user);
     return constructResponse(res, responseData);

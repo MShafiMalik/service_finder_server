@@ -14,7 +14,7 @@ const BOOKING_STATUS = {
   ACCEPTED: "Accepted",
   DENIED: "Denied",
   STARTED: "Started",
-  SUBMITED: "Submited",
+  SUBMITTED: "Submitted",
   COMPLETED: "Completed",
   DISPUTED_BY_BUYER: "Disputed By Buyer",
   DISPUTED_BY_SELLER: "Disputed By Seller",
