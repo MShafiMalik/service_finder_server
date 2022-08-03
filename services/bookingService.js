@@ -10,6 +10,44 @@ const {
   internalServerErrorResponse,
 } = require("../utils/utility");
 
+const get_bookings = async (user, status) => {
+  let query_condition;
+  if (user.role === ROLE_TYPES.SELLER) {
+    query_condition = {
+      seller_user: user._id,
+      status: status,
+    };
+  } else if (user.role === ROLE_TYPES.BUYER) {
+    query_condition = {
+      buyer_user: user._id,
+      status: status,
+    };
+  } else {
+    return {
+      success: false,
+      data: "",
+    };
+  }
+  const bookings = await BookingModel.find(query_condition)
+    .populate({
+      path: "seller_user",
+      Model: "User",
+      select: "-__v",
+    })
+    .populate({
+      path: "buyer_user",
+      Model: "User",
+      select: "-__v",
+    })
+    .populate({
+      path: "service",
+      Model: "Service",
+      select: "-__v",
+    });
+
+  return { success: true, data: bookings };
+};
+
 class BookingService {
   async create(req) {
     if (req.user.role !== ROLE_TYPES.BUYER) {
@@ -248,119 +286,51 @@ class BookingService {
   }
 
   async get_pending_all(user) {
-    if (user.role !== ROLE_TYPES.SELLER) {
+    const bookings = await get_bookings(user, BOOKING_STATUS.CREATED);
+    if (bookings.success === false) {
       return errorResponse(
         HTTP_STATUS.UNAUTHORIZED,
-        "Only Seller Can Get Bookings!"
+        "Only Seller Or Buyer Can Get Bookings!"
       );
+    } else {
+      return successResponse(bookings.data, HTTP_STATUS.OK);
     }
-    const bookings = await BookingModel.find({
-      seller_user: user._id,
-      status: BOOKING_STATUS.CREATED,
-    })
-      .populate({
-        path: "seller_user",
-        Model: "User",
-        select: "-__v",
-      })
-      .populate({
-        path: "buyer_user",
-        Model: "User",
-        select: "-__v",
-      })
-      .populate({
-        path: "service",
-        Model: "Service",
-        select: "-__v",
-      });
-    return successResponse(bookings, HTTP_STATUS.OK);
   }
 
   async get_active_all(user) {
-    if (user.role !== ROLE_TYPES.SELLER) {
+    const bookings = await get_bookings(user, BOOKING_STATUS.ACCEPTED);
+    if (bookings.success === false) {
       return errorResponse(
         HTTP_STATUS.UNAUTHORIZED,
-        "Only Seller Can Get Bookings!"
+        "Only Seller Or Buyer Can Get Bookings!"
       );
+    } else {
+      return successResponse(bookings.data, HTTP_STATUS.OK);
     }
-    const bookings = await BookingModel.find({
-      seller_user: user._id,
-      status: BOOKING_STATUS.ACCEPTED,
-    })
-      .populate({
-        path: "seller_user",
-        Model: "User",
-        select: "-__v",
-      })
-      .populate({
-        path: "buyer_user",
-        Model: "User",
-        select: "-__v",
-      })
-      .populate({
-        path: "service",
-        Model: "Service",
-        select: "-__v",
-      });
-    return successResponse(bookings, HTTP_STATUS.OK);
   }
 
   async get_completed_all(user) {
-    if (user.role !== ROLE_TYPES.SELLER) {
+    const bookings = await get_bookings(user, BOOKING_STATUS.COMPLETED);
+    if (bookings.success === false) {
       return errorResponse(
         HTTP_STATUS.UNAUTHORIZED,
-        "Only Seller Can Get Bookings!"
+        "Only Seller Or Buyer Can Get Bookings!"
       );
+    } else {
+      return successResponse(bookings.data, HTTP_STATUS.OK);
     }
-    const bookings = await BookingModel.find({
-      seller_user: user._id,
-      status: BOOKING_STATUS.COMPLETED,
-    })
-      .populate({
-        path: "seller_user",
-        Model: "User",
-        select: "-__v",
-      })
-      .populate({
-        path: "buyer_user",
-        Model: "User",
-        select: "-__v",
-      })
-      .populate({
-        path: "service",
-        Model: "Service",
-        select: "-__v",
-      });
-    return successResponse(bookings, HTTP_STATUS.OK);
   }
 
   async get_cancelled_all(user) {
-    if (user.role !== ROLE_TYPES.SELLER) {
+    const bookings = await get_bookings(user, BOOKING_STATUS.CANCELLED);
+    if (bookings.success === false) {
       return errorResponse(
         HTTP_STATUS.UNAUTHORIZED,
-        "Only Seller Can Get Bookings!"
+        "Only Seller Or Buyer Can Get Bookings!"
       );
+    } else {
+      return successResponse(bookings.data, HTTP_STATUS.OK);
     }
-    const bookings = await BookingModel.find({
-      seller_user: user._id,
-      status: BOOKING_STATUS.CANCELLED,
-    })
-      .populate({
-        path: "seller_user",
-        Model: "User",
-        select: "-__v",
-      })
-      .populate({
-        path: "buyer_user",
-        Model: "User",
-        select: "-__v",
-      })
-      .populate({
-        path: "service",
-        Model: "Service",
-        select: "-__v",
-      });
-    return successResponse(bookings, HTTP_STATUS.OK);
   }
 }
 
