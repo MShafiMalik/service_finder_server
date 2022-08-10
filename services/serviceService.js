@@ -1,20 +1,99 @@
+const { default: mongoose } = require("mongoose");
 const ServiceModel = require("../database/models/services");
 const { HTTP_STATUS } = require("../utils/constants");
 const { errorResponse, successResponse } = require("../utils/utility");
 
 class ServiceService {
   async getAll() {
-    const services = await ServiceModel.find({})
-      .populate({
-        path: "seller_user",
-        Model: "User",
-        select: "-password -__v",
-      })
-      .populate({
-        path: "category",
-        Model: "Category",
-        select: "-__v",
-      });
+    const services = await ServiceModel.aggregate([
+      {
+        $lookup: {
+          from: "users",
+          as: "seller",
+          let: { user_id: "$seller_user", service_id: "$_id" },
+          pipeline: [
+            {
+              $match: {
+                $expr: { $eq: ["$_id", "$$user_id"] },
+              },
+            },
+            {
+              $lookup: {
+                from: "buyer_reviews",
+                as: "reviews",
+                let: { user_id: "$_id" },
+                pipeline: [
+                  {
+                    $match: {
+                      $expr: { $and: [{ $eq: ["$seller_user", "$$user_id"] }] },
+                    },
+                  },
+                ],
+              },
+            },
+          ],
+        },
+      },
+      {
+        $lookup: {
+          from: "categories",
+          as: "category",
+          localField: "category",
+          foreignField: "_id",
+        },
+      },
+      { $unwind: "$category" },
+      { $unwind: "$seller" },
+    ]).exec();
+    return successResponse(services, HTTP_STATUS.OK);
+  }
+
+  async single_category(category_id) {
+    const services = await ServiceModel.aggregate([
+      {
+        $match: {
+          category: mongoose.Types.ObjectId(category_id),
+        },
+      },
+      {
+        $lookup: {
+          from: "users",
+          as: "seller",
+          let: { user_id: "$seller_user", service_id: "$_id" },
+          pipeline: [
+            {
+              $match: {
+                $expr: { $eq: ["$_id", "$$user_id"] },
+              },
+            },
+            {
+              $lookup: {
+                from: "buyer_reviews",
+                as: "reviews",
+                let: { user_id: "$_id" },
+                pipeline: [
+                  {
+                    $match: {
+                      $expr: { $eq: ["$seller_user", "$$user_id"] },
+                    },
+                  },
+                ],
+              },
+            },
+          ],
+        },
+      },
+      {
+        $lookup: {
+          from: "categories",
+          as: "category",
+          localField: "category",
+          foreignField: "_id",
+        },
+      },
+      { $unwind: "$category" },
+      { $unwind: "$seller" },
+    ]).exec();
     return successResponse(services, HTTP_STATUS.OK);
   }
 

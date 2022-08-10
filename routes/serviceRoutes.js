@@ -6,6 +6,7 @@ const validateApiRequest = require("../controllers/validations/validateRequest")
 const CheckAuthToken = require("../middlewares/checkAuthToken");
 
 router.get("/all", ServiceController.getAll);
+router.post("/single-category", ServiceController.single_category);
 router.post(
   "/add",
   CheckAuthToken,

@@ -7,6 +7,11 @@ class ServiceController {
     const responseData = await ServiceService.getAll();
     return constructResponse(res, responseData);
   };
+  static single_category = async (req, res) => {
+    const { category_id } = req.body;
+    const responseData = await ServiceService.single_category(category_id);
+    return constructResponse(res, responseData);
+  };
 
   static add = async (req, res) => {
     const responseData = await ServiceService.add(req);
