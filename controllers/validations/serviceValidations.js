@@ -3,7 +3,7 @@ const common = require("./common");
 const serviceValidations = () => {
   const titleValidation = common.titleValidations();
   const descriptionValidation = common.descriptionValidations();
-  const categoryIdValidation = common.categoryIdValidations();
+  const categoryValidation = common.categoryIdValidations();
   const latitudeValidation = common.latitudeValidations();
   const longitudeValidation = common.longitudeValidations();
   const addressValidation = common.addressValidations();
@@ -14,7 +14,7 @@ const serviceValidations = () => {
   return common.concatValidations(
     titleValidation,
     descriptionValidation,
-    categoryIdValidation,
+    categoryValidation,
     latitudeValidation,
     longitudeValidation,
     addressValidation,
@@ -25,4 +25,18 @@ const serviceValidations = () => {
   );
 };
 
-module.exports = { serviceValidations };
+const singleServiceValidations = () => {
+  const serviceIdValidations = common.serviceIdValidations();
+  return common.concatValidations(serviceIdValidations);
+};
+
+const singleCategoryValidations = () => {
+  const categoryIdValidations = common.categoryIdValidations();
+  return common.concatValidations(categoryIdValidations);
+};
+
+module.exports = {
+  serviceValidations,
+  singleCategoryValidations,
+  singleServiceValidations,
+};

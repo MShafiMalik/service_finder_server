@@ -1,5 +1,6 @@
 const { default: mongoose } = require("mongoose");
 const ServiceModel = require("../database/models/services");
+const CategoryModel = require("../database/models/categories");
 const { HTTP_STATUS } = require("../utils/constants");
 const { errorResponse, successResponse } = require("../utils/utility");
 
@@ -49,6 +50,7 @@ class ServiceService {
   }
 
   async single_category(category_id) {
+    const category = await CategoryModel.findById(category_id);
     const services = await ServiceModel.aggregate([
       {
         $match: {
@@ -94,7 +96,60 @@ class ServiceService {
       { $unwind: "$category" },
       { $unwind: "$seller" },
     ]).exec();
-    return successResponse(services, HTTP_STATUS.OK);
+    return successResponse(
+      { category: category, services: services },
+      HTTP_STATUS.OK
+    );
+  }
+
+  async single_service(service_id) {
+    const services = await ServiceModel.aggregate([
+      {
+        $match: {
+          _id: mongoose.Types.ObjectId(service_id),
+        },
+      },
+      {
+        $lookup: {
+          from: "users",
+          as: "seller",
+          let: { user_id: "$seller_user", service_id: "$_id" },
+          pipeline: [
+            {
+              $match: {
+                $expr: { $eq: ["$_id", "$$user_id"] },
+              },
+            },
+            {
+              $lookup: {
+                from: "buyer_reviews",
+                as: "reviews",
+                let: { user_id: "$_id" },
+                pipeline: [
+                  {
+                    $match: {
+                      $expr: { $eq: ["$seller_user", "$$user_id"] },
+                    },
+                  },
+                ],
+              },
+            },
+          ],
+        },
+      },
+      {
+        $lookup: {
+          from: "categories",
+          as: "category",
+          localField: "category",
+          foreignField: "_id",
+        },
+      },
+      { $unwind: "$category" },
+      { $unwind: "$seller" },
+    ]).exec();
+    const service = services.length > 0 ? services[0] : "";
+    return successResponse(service, HTTP_STATUS.OK);
   }
 
   async add(req) {

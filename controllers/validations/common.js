@@ -184,11 +184,23 @@ const concatValidations = (...arraysOfArray) => {
   return [].concat(arraysOfArray);
 };
 
+const mongodbIdValidation = (paramName) => {
+  return check(paramName)
+    .notEmpty()
+    .withMessage(`${paramName} is required`)
+    .custom((value) => {
+      if (!value.match(checkForHexRegExp)) {
+        return Promise.reject(`Invalid ${paramName}`);
+      }
+      return Promise.resolve();
+    });
+};
+
 const titleValidations = (paramName = "title") => {
   return isRequiredValidations(paramName);
 };
-const categoryIdValidations = (paramName = "category") => {
-  return isRequiredValidations(paramName);
+const categoryValidations = (paramName = "category") => {
+  return mongodbIdValidation(paramName);
 };
 
 const coordinateValidations = (paramName, min, max) => {
@@ -367,24 +379,20 @@ const weeklyScheduleValidations = (paramName = "weekly_schedule") => {
   });
 };
 
-const mongodbIdValidation = (paramName) => {
-  return check(paramName)
-    .notEmpty()
-    .withMessage(`${paramName} is required`)
-    .custom((value) => {
-      if (!value.match(checkForHexRegExp)) {
-        return Promise.reject(`Invalid ${paramName}`);
-      }
-      return Promise.resolve();
-    });
-};
-
 const sellerUserIdValidations = (paramName = "seller_user_id") => {
   return mongodbIdValidation(paramName);
 };
 const serviceIdValidations = (paramName = "service_id") => {
   return mongodbIdValidation(paramName);
 };
+const catIdValidations = (paramName = "category_id") => {
+  return mongodbIdValidation(paramName);
+};
+
+const categoryIdValidations = (paramName = "category_id") => {
+  return mongodbIdValidation(paramName);
+};
+
 const workStartDatetimeValidations = (paramName = "work_start_datetime") => {
   return isRequiredValidations(paramName);
 };
@@ -430,6 +438,7 @@ module.exports = {
   countryValidations,
   titleValidations,
   categoryIdValidations,
+  categoryValidations,
   latitudeValidations,
   longitudeValidations,
   addressValidations,
@@ -445,4 +454,5 @@ module.exports = {
   reviewValidations,
   receiverUserIdValidations,
   messageTextValidations,
+  catIdValidations,
 };
