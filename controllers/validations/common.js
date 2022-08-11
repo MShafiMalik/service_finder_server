@@ -96,27 +96,32 @@ const phoneNumberValidations = (paramName = "phone") => {
   ];
 };
 
-const stringDateValidations = (paramName = "date", isFutureDate = false) => {
+const dateValidations = (paramName, isFutureDate = false) => {
   return [
     check(paramName)
       .isLength({ min: 10, max: 10 })
       .withMessage("Length should be 10")
       .custom((value, { _req }) => {
-        const dateArray = value.split("/");
+        const dateArray = value.split("-");
         if (dateArray.length === 3) {
-          const date = Number(dateArray[0]);
+          const year = Number(dateArray[0]);
           const month = Number(dateArray[1]);
-          const year = Number(dateArray[2]);
+          const date = Number(dateArray[2]);
           const dateConverted = new Date(year, month - 1, date);
-          try {
-            if (!(dateConverted instanceof Date && !isNaN(dateConverted))) {
-              throw new Error(
-                `Invalid ${paramName} format. Valid format is dd/mm/yyyy`
-              );
-            }
-          } catch (error) {
+          if (
+            year.toString().length !== 4 ||
+            month < 1 ||
+            month > 12 ||
+            date < 1 ||
+            date > 31
+          ) {
             throw new Error(
-              `Invalid ${paramName} format. Valid format is dd/mm/yyyy`
+              `Invalid ${paramName} format. Valid format is yyyy-mm-dd`
+            );
+          }
+          if (!(dateConverted instanceof Date && !isNaN(dateConverted))) {
+            throw new Error(
+              `Invalid ${paramName} format. Valid format is yyyy-mm-dd`
             );
           }
           if (isFutureDate && dateConverted < new Date()) {
@@ -126,8 +131,30 @@ const stringDateValidations = (paramName = "date", isFutureDate = false) => {
           }
         } else
           throw new Error(
-            `Invalid ${paramName} format. Valid format is dd/mm/yyyy`
+            `Invalid ${paramName} format. Valid format is yyyy-mm-dd`
           );
+        return true;
+      }),
+  ];
+};
+
+const timeValidations = (paramName) => {
+  return [
+    check(paramName)
+      .isLength({ min: 5, max: 5 })
+      .withMessage("Length should be 5")
+      .custom((value, { _req }) => {
+        const timeArray = value.split(":");
+        if (timeArray.length === 2) {
+          const hours = Number(timeArray[0]);
+          const minutes = Number(timeArray[1]);
+          if (hours < 0 || hours > 23 || minutes < 0 || minutes > 59) {
+            throw new Error(
+              `Invalid ${paramName} format. Valid format is hh:mm`
+            );
+          }
+        } else
+          throw new Error(`Invalid ${paramName} format. Valid format is hh:mm`);
         return true;
       }),
   ];
@@ -319,8 +346,11 @@ const categoryIdValidations = (paramName = "category_id") => {
   return mongodbIdValidation(paramName);
 };
 
-const workStartDatetimeValidations = (paramName = "work_start_datetime") => {
-  return isRequiredValidations(paramName);
+const workStartDateValidations = (paramName = "work_start_date") => {
+  return dateValidations(paramName);
+};
+const workStartTimeValidations = (paramName = "work_start_time") => {
+  return timeValidations(paramName);
 };
 const bookingIdValidations = (paramName = "booking_id") => {
   return mongodbIdValidation(paramName);
@@ -351,7 +381,6 @@ module.exports = {
   oldPasswordValidations,
   newPasswordValidations,
   phoneNumberValidations,
-  stringDateValidations,
   integerValidation,
   booleanValidation,
   urlValidations,
@@ -373,7 +402,8 @@ module.exports = {
   imagesValidations,
   sellerUserIdValidations,
   serviceIdValidations,
-  workStartDatetimeValidations,
+  workStartDateValidations,
+  workStartTimeValidations,
   bookingIdValidations,
   ratingValidations,
   reviewValidations,

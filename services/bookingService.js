@@ -56,7 +56,8 @@ class BookingService {
         "Only Buyer Can Create Booking!"
       );
     }
-    const { seller_user_id, service_id, work_start_datetime } = req.body;
+    const { seller_user_id, service_id, work_start_date, work_start_time } =
+      req.body;
     const is_duplicate = await BookingModel.find({
       seller_user: seller_user_id,
       buyer_user: req.user._id,
@@ -75,11 +76,12 @@ class BookingService {
         "This Booking Already Created!"
       );
     }
+
     const booking = new BookingModel({
       seller_user: seller_user_id,
       buyer_user: req.user._id,
       service: service_id,
-      work_start_datetime: work_start_datetime,
+      work_start_datetime: new Date(work_start_date + " " + work_start_time),
     });
     await booking.save();
     if (booking) {
