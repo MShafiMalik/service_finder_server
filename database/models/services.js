@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const { SERVICE_STATUS } = require("../../utils/constants");
 
 const serviceSchema = new mongoose.Schema({
   seller_user: {
@@ -35,42 +36,11 @@ const serviceSchema = new mongoose.Schema({
     },
   },
   images: [{ type: String, required: true, trim: true }],
-  weekly_schedule: {
-    mon:
-      {
-        start: { type: String, required: true, trim: true },
-        end: { type: String, required: true, trim: true },
-      } | { type: String, required: true, trim: true },
-    tue:
-      {
-        start: { type: String, required: true, trim: true },
-        end: { type: String, required: true, trim: true },
-      } | { type: String, required: true, trim: true },
-    wed:
-      {
-        start: { type: String, required: true, trim: true },
-        end: { type: String, required: true, trim: true },
-      } | { type: String, required: true, trim: true },
-    thu:
-      {
-        start: { type: String, required: true, trim: true },
-        end: { type: String, required: true, trim: true },
-      } | { type: String, required: true, trim: true },
-    fri:
-      {
-        start: { type: String, required: true, trim: true },
-        end: { type: String, required: true, trim: true },
-      } | { type: String, required: true, trim: true },
-    sat:
-      {
-        start: { type: String, required: true, trim: true },
-        end: { type: String, required: true, trim: true },
-      } | { type: String, required: true, trim: true },
-    sun:
-      {
-        start: { type: String, required: true, trim: true },
-        end: { type: String, required: true, trim: true },
-      } | { type: String, required: true, trim: true },
+  status: {
+    type: String,
+    required: true,
+    trim: true,
+    default: SERVICE_STATUS.ACTIVE,
   },
   created_at: { type: Date, required: true, trim: true, default: Date.now() },
 });

@@ -1,4 +1,3 @@
-const { Model } = require("mongoose");
 const ChatRoomModel = require("../database/models/chat_rooms");
 const MessageModel = require("../database/models/messages");
 const UserModel = require("../database/models/users");
@@ -74,24 +73,64 @@ class MessageService {
         select: "-password -__v",
       })
       .select("-chat_room");
+
     return successResponse(messages, HTTP_STATUS.OK);
   }
 
   async get_chat_rooms(user) {
-    console.log(user);
-    let chat_rooms = await ChatRoomModel.find({
-      $or: [{ user1: user._id }, { user2: user._id }],
-    })
-      .populate({
-        path: "user1",
-        Model: "User",
-        select: "-password -__v",
-      })
-      .populate({
-        path: "user2",
-        Model: "User",
-        select: "-password -__v",
-      });
+    const chat_rooms = await ChatRoomModel.aggregate([
+      {
+        $match: {
+          $expr: {
+            $or: [{ $eq: ["$user1", user._id] }, { $eq: ["$user2", user._id] }],
+          },
+        },
+      },
+      {
+        $lookup: {
+          from: "messages",
+          as: "messages",
+          let: { chat_id: "$_id" },
+          pipeline: [
+            {
+              $match: {
+                $expr: { $eq: ["$chat_room", "$$chat_id"] },
+              },
+            },
+          ],
+        },
+      },
+      {
+        $lookup: {
+          from: "users",
+          as: "user1",
+          let: { user_id: "$user1" },
+          pipeline: [
+            {
+              $match: {
+                $expr: { $eq: ["$_id", "$$user_id"] },
+              },
+            },
+          ],
+        },
+      },
+      {
+        $lookup: {
+          from: "users",
+          as: "user2",
+          let: { user_id: "$user2" },
+          pipeline: [
+            {
+              $match: {
+                $expr: { $eq: ["$_id", "$$user_id"] },
+              },
+            },
+          ],
+        },
+      },
+      { $unwind: "$user1" },
+      { $unwind: "$user2" },
+    ]).exec();
     return successResponse(chat_rooms, HTTP_STATUS.OK);
   }
 }

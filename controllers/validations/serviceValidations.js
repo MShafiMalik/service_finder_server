@@ -10,7 +10,6 @@ const serviceValidations = () => {
   const radiusValidation = common.radiusValidations();
   const packagesValidation = common.packagesValidations();
   const imagesValidation = common.imagesValidations();
-  // const weeklyScheduleValidation = common.weeklyScheduleValidations();
   return common.concatValidations(
     titleValidation,
     descriptionValidation,
@@ -21,7 +20,6 @@ const serviceValidations = () => {
     radiusValidation,
     packagesValidation,
     imagesValidation
-    // weeklyScheduleValidation
   );
 };
 

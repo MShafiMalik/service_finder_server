@@ -9,6 +9,11 @@ const SELLER_STATUS = {
   BUSY: "Busy",
 };
 
+const SERVICE_STATUS = {
+  ACTIVE: "Active",
+  PAUSE: "Pause",
+};
+
 const BOOKING_STATUS = {
   CREATED: "Created",
   ACCEPTED: "Accepted",
@@ -99,6 +104,7 @@ const HTTP_STATUS = {
 module.exports = {
   ROLE_TYPES,
   SELLER_STATUS,
+  SERVICE_STATUS,
   LOGGER_TAGS,
   DB_USER_STATUS,
   HTTP_STATUS,

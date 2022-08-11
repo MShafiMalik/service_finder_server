@@ -305,80 +305,6 @@ const imagesValidations = (paramName = "images") => {
     .withMessage(`${paramName} should be an array with at least one item`);
 };
 
-const subWeeklyScheduleValidations = (day_value, day_name) => {
-  if (!day_value) {
-    return {
-      status: "error",
-      message: `${day_name} of weekly schedule is required`,
-    };
-  }
-  if (day_value === "off") {
-    return {
-      status: "success",
-      message: "",
-    };
-  }
-  if (typeof day_value !== "object") {
-    return {
-      status: "error",
-      message: `${day_name} of weekly schedule is invalid, It should be a valid start and end time or off!`,
-    };
-  }
-  if (!day_value.start.match(time_regx)) {
-    return {
-      status: "error",
-      message: `Incorrect from time of ${day_name}, It should be a valid time`,
-    };
-  }
-  if (!day_value.end) {
-    return {
-      status: "error",
-      message: `To time of ${day_name} of weekly schedule is required`,
-    };
-  }
-  return {
-    status: "success",
-    message: "",
-  };
-};
-
-const weeklyScheduleValidations = (paramName = "weekly_schedule") => {
-  return check(paramName).custom((value) => {
-    if (typeof value !== "object" || value === null) {
-      return Promise.reject(`${paramName} Is Required`);
-    }
-    const mon_response = subWeeklyScheduleValidations(value.mon, "Monday");
-    if (mon_response.status === "error") {
-      return Promise.reject(mon_response.message);
-    }
-    const tue_response = subWeeklyScheduleValidations(value.tue, "Tuesday");
-    if (tue_response.status === "error") {
-      return Promise.reject(tue_response.message);
-    }
-    const wed_response = subWeeklyScheduleValidations(value.wed, "Wednesday");
-    if (wed_response.status === "error") {
-      return Promise.reject(wed_response.message);
-    }
-    const thu_response = subWeeklyScheduleValidations(value.thu, "Thursday");
-    if (thu_response.status === "error") {
-      return Promise.reject(thu_response.message);
-    }
-    const fri_response = subWeeklyScheduleValidations(value.fri, "Friday");
-    if (fri_response.status === "error") {
-      return Promise.reject(fri_response.message);
-    }
-    const sat_response = subWeeklyScheduleValidations(value.sat, "Saturday");
-    if (sat_response.status === "error") {
-      return Promise.reject(sat_response.message);
-    }
-    const sun_response = subWeeklyScheduleValidations(value.sun, "Sunday");
-    if (sun_response.status === "error") {
-      return Promise.reject(sun_response.message);
-    }
-    return Promise.resolve();
-  });
-};
-
 const sellerUserIdValidations = (paramName = "seller_user_id") => {
   return mongodbIdValidation(paramName);
 };
@@ -445,7 +371,6 @@ module.exports = {
   radiusValidations,
   packagesValidations,
   imagesValidations,
-  weeklyScheduleValidations,
   sellerUserIdValidations,
   serviceIdValidations,
   workStartDatetimeValidations,
