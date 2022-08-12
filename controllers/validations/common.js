@@ -342,7 +342,7 @@ const catIdValidations = (paramName = "category_id") => {
   return mongodbIdValidation(paramName);
 };
 
-const categoryIdValidations = (paramName = "category_id") => {
+const categoryIdValidations = (paramName = "category") => {
   return mongodbIdValidation(paramName);
 };
 
@@ -368,6 +368,10 @@ const receiverUserIdValidations = (paramName = "receiver_user_id") => {
 };
 const messageTextValidations = (paramName = "message_text") => {
   return isRequiredValidations(paramName);
+};
+
+const userIdValidations = (paramName = "user_id") => {
+  return mongodbIdValidation(paramName);
 };
 
 module.exports = {
@@ -410,4 +414,5 @@ module.exports = {
   receiverUserIdValidations,
   messageTextValidations,
   catIdValidations,
+  userIdValidations,
 };
