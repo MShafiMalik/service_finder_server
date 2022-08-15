@@ -17,6 +17,7 @@ const userSchema = new mongoose.Schema({
   activation_key: { type: Number, required: true },
   key_expire_time: { type: Date, default: Date.now },
   status: { type: String, default: SELLER_STATUS.IDLE },
+  personal_info: { type: Boolean, default: false },
   created_at: { type: Date, required: true, trim: true, default: Date.now() },
 });
 

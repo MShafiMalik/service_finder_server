@@ -254,6 +254,7 @@ class AuthService {
     user.city = city;
     user.state = state;
     user.country = country;
+    user.personal_info = true;
     await user.save();
     const updated_user = await UserModel.findById(user._id).select([
       "-password",
