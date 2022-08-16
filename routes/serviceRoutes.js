@@ -7,6 +7,13 @@ const CheckAuthToken = require("../middlewares/checkAuthToken");
 
 router.get("/all", ServiceController.getAll);
 router.post(
+  "/search",
+  serviceValidations.searchValidations(),
+  validateApiRequest,
+  ServiceController.search
+);
+
+router.post(
   "/single-category",
   serviceValidations.singleCategoryValidations(),
   validateApiRequest,
@@ -32,6 +39,26 @@ router.post(
   validateApiRequest,
   ServiceController.update
 );
-router.post("/delete", CheckAuthToken, ServiceController.delete);
+router.post(
+  "/delete",
+  CheckAuthToken,
+  serviceValidations.singleServiceValidations(),
+  validateApiRequest,
+  ServiceController.delete
+);
+router.post(
+  "/pause",
+  CheckAuthToken,
+  serviceValidations.singleServiceValidations(),
+  validateApiRequest,
+  ServiceController.pause
+);
+router.post(
+  "/active",
+  CheckAuthToken,
+  serviceValidations.singleServiceValidations(),
+  validateApiRequest,
+  ServiceController.active
+);
 
 module.exports = router;

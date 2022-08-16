@@ -21,6 +21,7 @@
     "express-validator": "^6.14.2",
     "graylog2": "^0.2.1",
     "mongoose": "^6.4.4",
+    "node-geocoder": "^4.2.0",
     "nodemailer": "^6.7.7",
     "passport": "^0.6.0",
     "passport-jwt": "^4.0.0",

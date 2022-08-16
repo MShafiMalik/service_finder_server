@@ -8,6 +8,16 @@ class ServiceController {
     return constructResponse(res, responseData);
   };
 
+  static search = async (req, res) => {
+    const { keyword, category_id, address } = req.body;
+    const responseData = await ServiceService.search(
+      keyword,
+      category_id,
+      address
+    );
+    return constructResponse(res, responseData);
+  };
+
   static single_category = async (req, res) => {
     const { category_id } = req.body;
     const responseData = await ServiceService.single_category(category_id);
@@ -32,6 +42,16 @@ class ServiceController {
 
   static delete = async (req, res) => {
     const responseData = await ServiceService.delete(req);
+    return constructResponse(res, responseData);
+  };
+
+  static pause = async (req, res) => {
+    const responseData = await ServiceService.pause(req);
+    return constructResponse(res, responseData);
+  };
+
+  static active = async (req, res) => {
+    const responseData = await ServiceService.active(req);
     return constructResponse(res, responseData);
   };
 }

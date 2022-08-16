@@ -1,5 +1,16 @@
 const common = require("./common");
 
+const searchValidations = () => {
+  const keywordValidations = common.keywordValidations();
+  const categoryIdValidations = common.catIdValidations();
+  const addressValidations = common.addressValidations();
+  return common.concatValidations(
+    keywordValidations,
+    categoryIdValidations,
+    addressValidations
+  );
+};
+
 const serviceValidations = () => {
   const titleValidation = common.titleValidations();
   const descriptionValidation = common.descriptionValidations();
@@ -29,11 +40,12 @@ const singleServiceValidations = () => {
 };
 
 const singleCategoryValidations = () => {
-  const categoryIdValidations = common.categoryIdValidations();
+  const categoryIdValidations = common.catIdValidations();
   return common.concatValidations(categoryIdValidations);
 };
 
 module.exports = {
+  searchValidations,
   serviceValidations,
   singleCategoryValidations,
   singleServiceValidations,

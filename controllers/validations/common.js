@@ -346,6 +346,10 @@ const categoryIdValidations = (paramName = "category") => {
   return mongodbIdValidation(paramName);
 };
 
+const keywordValidations = (paramName = "keyword") => {
+  return isRequiredValidations(paramName);
+};
+
 const workStartDateValidations = (paramName = "work_start_date") => {
   return dateValidations(paramName);
 };
@@ -415,4 +419,5 @@ module.exports = {
   messageTextValidations,
   catIdValidations,
   userIdValidations,
+  keywordValidations,
 };

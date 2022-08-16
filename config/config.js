@@ -6,6 +6,7 @@ module.exports = {
   SERVER_BASE_URL: keys.SERVER_BASE_URL,
   JWT_SECRET_KEY: keys.JWT_SECRET_KEY,
   URL_CRYPT_SECRET_KEY: keys.URL_CRYPT_SECRET_KEY,
+  GOOGLE_MAP_API_KEY: keys.GOOGLE_MAP_API_KEY,
   logs: {
     debugLevel: keys.logs.debugLevel,
     enableLogs: keys.logs.enableLogs,

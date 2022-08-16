@@ -1,9 +1,9 @@
 const { default: mongoose } = require("mongoose");
 const UserModel = require("../database/models/users");
-const { HTTP_STATUS } = require("../utils/constants");
+const { HTTP_STATUS, SERVICE_STATUS } = require("../utils/constants");
 const { successResponse, errorResponse } = require("../utils/utility");
 
-class CategoryService {
+class SellerService {
   async getOne(user_id) {
     const user = await UserModel.findById(user_id);
     if (!user) {
@@ -49,8 +49,33 @@ class CategoryService {
         $lookup: {
           from: "services",
           as: "services",
-          localField: "_id",
-          foreignField: "seller_user",
+          let: { user_id: "$_id" },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $and: [
+                    { $eq: ["$seller_user", "$$user_id"] },
+                    { $eq: ["$status", SERVICE_STATUS.ACTIVE] },
+                  ],
+                },
+              },
+            },
+            {
+              $lookup: {
+                from: "buyer_reviews",
+                as: "reviews",
+                let: { service_id: "$_id" },
+                pipeline: [
+                  {
+                    $match: {
+                      $expr: { $eq: ["$service", "$$service_id"] },
+                    },
+                  },
+                ],
+              },
+            },
+          ],
         },
       },
     ]).exec();
@@ -59,4 +84,4 @@ class CategoryService {
   }
 }
 
-module.exports = CategoryService;
+module.exports = SellerService;

@@ -4,11 +4,12 @@ const { constructResponse } = require("../utils/utility");
 
 class CategoryController {
   static add = async (req, res) => {
-    const { seller_user_id, booking_id, rating, review } = req.body;
+    const { seller_user_id, booking_id, service_id, rating, review } = req.body;
     const responseData = await BuyerReviewService.add(
       req.user,
       seller_user_id,
       booking_id,
+      service_id,
       rating,
       review
     );

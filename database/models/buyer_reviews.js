@@ -16,6 +16,11 @@ const buyerReviewSchema = new mongoose.Schema({
     required: true,
     ref: "Booking",
   },
+  service: {
+    type: mongoose.Schema.Types.ObjectId,
+    required: true,
+    ref: "services",
+  },
   rating: { type: Number, required: true, min: 0, max: 5 },
   review: { type: String, required: true, trim: true },
   created_at: { type: Date, required: true, trim: true, default: Date.now() },
