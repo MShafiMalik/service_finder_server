@@ -3,11 +3,13 @@ const common = require("./common");
 const searchValidations = () => {
   const keywordValidations = common.keywordValidations();
   const categoryIdValidations = common.catIdValidations();
-  const addressValidations = common.addressValidations();
+  const latitudeValidations = common.latitudeValidations();
+  const longitudeValidations = common.longitudeValidations();
   return common.concatValidations(
     keywordValidations,
     categoryIdValidations,
-    addressValidations
+    latitudeValidations,
+    longitudeValidations
   );
 };
 

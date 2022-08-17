@@ -5,6 +5,46 @@ const { HTTP_STATUS, SERVICE_STATUS } = require("../utils/constants");
 const { errorResponse, successResponse } = require("../utils/utility");
 const NodeGeocoder = require("node-geocoder");
 const { GOOGLE_MAP_API_KEY } = require("../config/config");
+const options = {
+  provider: "google",
+  apiKey: GOOGLE_MAP_API_KEY,
+  formatter: null,
+};
+const geocoder = NodeGeocoder(options);
+
+function calc_distance(lat1, lon1, lat2, lon2) {
+  const R = 6371;
+  const dLat = toRad(lat2 - lat1);
+  const dLon = toRad(lon2 - lon1);
+  const latitude1 = toRad(lat1);
+  const latitude2 = toRad(lat2);
+
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.sin(dLon / 2) *
+      Math.sin(dLon / 2) *
+      Math.cos(latitude1) *
+      Math.cos(latitude2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return (R * c) / 1.609;
+}
+function toRad(Value) {
+  return (Value * Math.PI) / 180;
+}
+
+const getServicesInsideRadius = (services, latitude, longitude) => {
+  const new_services = [];
+  services.forEach((service) => {
+    const db_lat = service.latitude;
+    const db_lng = service.longitude;
+    const distance = calc_distance(db_lat, db_lng, latitude, longitude);
+    const radius = service.radius;
+    if (distance <= radius) {
+      new_services.push(service);
+    }
+  });
+  return new_services;
+};
 
 class ServiceService {
   async getAll() {
@@ -56,19 +96,15 @@ class ServiceService {
     return successResponse(services, HTTP_STATUS.OK);
   }
 
-  async search(keyword, category_id, address) {
-    const options = {
-      provider: "google",
-      apiKey: GOOGLE_MAP_API_KEY,
-      formatter: null,
-    };
-    const geocoder = NodeGeocoder(options);
-    const address_response = await geocoder.geocode(address);
-    if (!address_response || address_response.length === 0) {
-      return errorResponse(HTTP_STATUS.NOT_ACCEPTABLE, "Invalid Address!");
-    }
+  async search(keyword, category_id, latitude, longitude) {
+    // const address_response = await geocoder.geocode(address);
+    // if (!address_response || address_response.length === 0) {
+    //   return errorResponse(HTTP_STATUS.NOT_ACCEPTABLE, "Invalid Address!");
+    // }
+    // const latitude = address_response[0].latitude;
+    // const longitude = address_response[0].longitude;
 
-    const services = await ServiceModel.aggregate([
+    let services = await ServiceModel.aggregate([
       {
         $match: {
           $and: [
@@ -117,6 +153,8 @@ class ServiceService {
       { $unwind: "$category" },
       { $unwind: "$seller" },
     ]).exec();
+
+    services = getServicesInsideRadius(services, latitude, longitude);
 
     return successResponse(services, HTTP_STATUS.OK);
   }

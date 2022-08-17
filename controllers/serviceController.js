@@ -9,11 +9,12 @@ class ServiceController {
   };
 
   static search = async (req, res) => {
-    const { keyword, category_id, address } = req.body;
+    const { keyword, category_id, latitude, longitude } = req.body;
     const responseData = await ServiceService.search(
       keyword,
       category_id,
-      address
+      latitude,
+      longitude
     );
     return constructResponse(res, responseData);
   };
