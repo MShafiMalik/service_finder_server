@@ -1,6 +1,11 @@
 const { default: mongoose } = require("mongoose");
+const BusyUserModel = require("../database/models/busyUsers");
 const UserModel = require("../database/models/users");
-const { HTTP_STATUS, SERVICE_STATUS } = require("../utils/constants");
+const {
+  HTTP_STATUS,
+  SERVICE_STATUS,
+  ROLE_TYPES,
+} = require("../utils/constants");
 const { successResponse, errorResponse } = require("../utils/utility");
 
 class SellerService {
@@ -81,6 +86,26 @@ class SellerService {
     ]).exec();
     const seller = sellers.length > 0 ? sellers[0] : "";
     return successResponse(seller, HTTP_STATUS.OK, "");
+  }
+
+  async busy(user, busy_date) {
+    if (user.role !== ROLE_TYPES.SELLER) {
+      return errorResponse(HTTP_STATUS.UNAUTHORIZED, "You are not a seller!");
+    }
+    const busy_user = new BusyUserModel({
+      seller_user: user._id,
+      busy_date: busy_date,
+    });
+    await busy_user.save();
+    if (busy_user) {
+      return successResponse(
+        busy_user,
+        HTTP_STATUS.OK,
+        "Seller Schedule Changed To Busy Successfully!"
+      );
+    } else {
+      return internalServerErrorResponse();
+    }
   }
 }
 

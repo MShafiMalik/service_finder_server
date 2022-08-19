@@ -8,6 +8,12 @@ class CategoryController {
     const responseData = await SellerService.getOne(user_id);
     return constructResponse(res, responseData);
   };
+
+  static busy = async (req, res) => {
+    const { busy_date } = req.body;
+    const responseData = await SellerService.busy(req.user, busy_date);
+    return constructResponse(res, responseData);
+  };
 }
 
 module.exports = CategoryController;

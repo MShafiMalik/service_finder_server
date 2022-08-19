@@ -3,14 +3,6 @@ const ServiceModel = require("../database/models/services");
 const CategoryModel = require("../database/models/categories");
 const { HTTP_STATUS, SERVICE_STATUS } = require("../utils/constants");
 const { errorResponse, successResponse } = require("../utils/utility");
-const NodeGeocoder = require("node-geocoder");
-const { GOOGLE_MAP_API_KEY } = require("../config/config");
-const options = {
-  provider: "google",
-  apiKey: GOOGLE_MAP_API_KEY,
-  formatter: null,
-};
-const geocoder = NodeGeocoder(options);
 
 function calc_distance(lat1, lon1, lat2, lon2) {
   const R = 6371;
@@ -97,13 +89,6 @@ class ServiceService {
   }
 
   async search(keyword, category_id, latitude, longitude) {
-    // const address_response = await geocoder.geocode(address);
-    // if (!address_response || address_response.length === 0) {
-    //   return errorResponse(HTTP_STATUS.NOT_ACCEPTABLE, "Invalid Address!");
-    // }
-    // const latitude = address_response[0].latitude;
-    // const longitude = address_response[0].longitude;
-
     let services = await ServiceModel.aggregate([
       {
         $match: {
