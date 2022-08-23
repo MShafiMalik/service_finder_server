@@ -21,9 +21,37 @@ const buyerReviewSchema = new mongoose.Schema({
     required: true,
     ref: "services",
   },
-  rating: { type: Number, required: true, min: 0, max: 5 },
+  rating: {
+    seller_communication_level: {
+      type: Number,
+      required: true,
+      min: 0,
+      max: 5,
+    },
+    service_as_described: {
+      type: Number,
+      required: true,
+      min: 0,
+      max: 5,
+    },
+    average_rating: {
+      type: Number,
+      min: 0,
+      max: 5,
+    },
+  },
   review: { type: String, required: true, trim: true },
+  image: { type: String, trim: true },
   created_at: { type: Date, required: true, trim: true, default: Date.now() },
+});
+
+buyerReviewSchema.pre("save", function (next) {
+  this.rating.average_rating = (
+    (this.rating.seller_communication_level +
+      this.rating.service_as_described) /
+    2
+  ).toFixed(1);
+  next();
 });
 
 const BuyerReviewModel = mongoose.model(

@@ -9,7 +9,15 @@ const {
 } = require("../utils/utility");
 
 class BuyerReviewService {
-  async add(user, seller_user_id, booking_id, service_id, rating, review) {
+  async add(
+    user,
+    seller_user_id,
+    booking_id,
+    service_id,
+    rating,
+    review,
+    image
+  ) {
     if (user.role !== ROLE_TYPES.BUYER) {
       return errorResponse(
         HTTP_STATUS.UNAUTHORIZED,
@@ -46,6 +54,7 @@ class BuyerReviewService {
       service: service_id,
       rating: rating,
       review: review,
+      image: image,
     });
     await buyer_review.save();
     if (buyer_review) {

@@ -42,6 +42,11 @@ class AuthController {
     return constructResponse(res, responseData);
   };
 
+  static detail = async (req, res) => {
+    const responseData = await AuthService.detail(req.user);
+    return constructResponse(res, responseData);
+  };
+
   static reset_password = async (req, res) => {
     const { email, password } = req.body;
     const responseData = await AuthService.reset_password(email, password);

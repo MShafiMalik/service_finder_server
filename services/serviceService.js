@@ -237,6 +237,35 @@ class ServiceService {
       },
       {
         $lookup: {
+          from: "buyer_reviews",
+          as: "reviews",
+          let: { service_id: "$_id" },
+          pipeline: [
+            {
+              $match: {
+                $expr: { $eq: ["$service", "$$service_id"] },
+              },
+            },
+            {
+              $lookup: {
+                from: "users",
+                as: "buyer",
+                let: { user_id: "$buyer_user" },
+                pipeline: [
+                  {
+                    $match: {
+                      $expr: { $eq: ["$_id", "$$user_id"] },
+                    },
+                  },
+                ],
+              },
+            },
+            { $unwind: "$buyer" },
+          ],
+        },
+      },
+      {
+        $lookup: {
           from: "categories",
           as: "category",
           localField: "category",

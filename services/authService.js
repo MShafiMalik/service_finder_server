@@ -189,6 +189,14 @@ class AuthService {
     }
   }
 
+  async detail(user) {
+    return successResponse(
+      user,
+      HTTP_STATUS.OK,
+      "User Activated Successfully!"
+    );
+  }
+
   async reset_password(email, password) {
     const user = await UserModel.findOne({ email: email });
     if (!user) {

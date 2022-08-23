@@ -359,9 +359,53 @@ const workStartTimeValidations = (paramName = "work_start_time") => {
 const bookingIdValidations = (paramName = "booking_id") => {
   return mongodbIdValidation(paramName);
 };
-
+const subRatingValidations = (rating, paramName, subParamName) => {
+  if (!rating) {
+    return {
+      error: true,
+      message: `${subParamName} of ${paramName} is required`,
+    };
+  }
+  if (isNaN(rating)) {
+    return {
+      error: true,
+      message: `${subParamName} of ${paramName} is not a number`,
+    };
+  }
+  if (rating < 1 || rating > 5) {
+    return {
+      error: true,
+      message: `Invalid length of ${subParamName} of ${paramName}, It Should be between 1 and 5`,
+    };
+  }
+  return {
+    error: false,
+    message: "",
+  };
+};
 const ratingValidations = (paramName = "rating") => {
-  return coordinateValidations(paramName, 0, 5);
+  return check(paramName).custom((value) => {
+    if (typeof value !== "object" || value === null) {
+      return Promise.reject(`${paramName} Is Required`);
+    }
+    const seller_communication_level_validation = subRatingValidations(
+      value.seller_communication_level,
+      paramName,
+      "seller_communication_level"
+    );
+    if (seller_communication_level_validation.error === true) {
+      return Promise.reject(seller_communication_level_validation.message);
+    }
+    const service_as_described_validation = subRatingValidations(
+      value.service_as_described,
+      paramName,
+      "service_as_described"
+    );
+    if (service_as_described_validation.error === true) {
+      return Promise.reject(service_as_described_validation.message);
+    }
+    return Promise.resolve();
+  });
 };
 const reviewValidations = (paramName = "review") => {
   return isRequiredValidations(paramName);

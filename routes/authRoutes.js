@@ -4,7 +4,6 @@ const AuthController = require("../controllers/authController");
 const validateApiRequest = require("../controllers/validations/validateRequest");
 const authValidation = require("../controllers/validations/authValidations");
 const userRole = require("../middlewares/userRole");
-const UserModel = require("../database/models/users");
 const CheckAuthToken = require("../middlewares/checkAuthToken");
 
 router.post(
@@ -35,6 +34,8 @@ router.post(
   validateApiRequest,
   AuthController.verify_email
 );
+
+router.get("/detail", CheckAuthToken, AuthController.detail);
 
 router.post(
   "/forgot-password",
@@ -72,18 +73,5 @@ router.post(
   validateApiRequest,
   AuthController.updateProfile
 );
-
-router.post("/del-user", async (req, res) => {
-  const { email } = req.body;
-  if (!email) {
-    re.send("Email is required");
-  }
-  const user = await UserModel.findOneAndRemove({ email: email });
-  if (user) {
-    res.send({ user: user, message: "User Deleted" });
-  } else {
-    res.send("Invalid Email");
-  }
-});
 
 module.exports = router;
