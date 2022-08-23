@@ -35,7 +35,7 @@ router.post(
   AuthController.verify_email
 );
 
-router.get("/detail", CheckAuthToken, AuthController.detail);
+router.get("/me", CheckAuthToken, AuthController.detail);
 
 router.post(
   "/forgot-password",
