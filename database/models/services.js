@@ -22,16 +22,19 @@ const serviceSchema = new mongoose.Schema({
     basic: {
       name: { type: String, required: true, trim: true },
       description: { type: String, required: true, trim: true },
+      features: [{ type: String, required: true, trim: true }],
       price: { type: Number, required: true, trim: true },
     },
     standard: {
       name: { type: String, required: true, trim: true },
       description: { type: String, required: true, trim: true },
+      features: [{ type: String, required: true, trim: true }],
       price: { type: Number, required: true, trim: true },
     },
     premium: {
       name: { type: String, required: true, trim: true },
       description: { type: String, required: true, trim: true },
+      features: [{ type: String, required: true, trim: true }],
       price: { type: Number, required: true, trim: true },
     },
   },

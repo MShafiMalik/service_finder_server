@@ -287,6 +287,24 @@ const subPackageValidations = (pkg_value, pkg_name) => {
       message: `Description of ${pkg_name} package is required`,
     };
   }
+  if (!pkg_value.features) {
+    return {
+      status: "error",
+      message: `Features of ${pkg_name} package is required`,
+    };
+  }
+  if (Array.isArray(pkg_value.features) === false) {
+    return {
+      status: "error",
+      message: `Features of ${pkg_name} package should be an array`,
+    };
+  }
+  if (pkg_value.features.length === 0) {
+    return {
+      status: "error",
+      message: `Features of ${pkg_name} package should have at least one item`,
+    };
+  }
   if (!pkg_value.price) {
     return {
       status: "error",
