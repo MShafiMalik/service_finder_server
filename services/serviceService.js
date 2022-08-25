@@ -18,7 +18,7 @@ function calc_distance(lat1, lon1, lat2, lon2) {
       Math.cos(latitude1) *
       Math.cos(latitude2);
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-  return (R * c) / 1.609;
+  return R * c;
 }
 function toRad(Value) {
   return (Value * Math.PI) / 180;
@@ -32,7 +32,7 @@ const getServicesInsideRadius = (services, latitude, longitude) => {
     const distance = calc_distance(db_lat, db_lng, latitude, longitude);
     const radius = service.radius;
     if (distance <= radius) {
-      new_services.push(service);
+      new_services.push({ ...service, distance: `${distance.toFixed(2)} KM` });
     }
   });
   return new_services;

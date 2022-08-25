@@ -42,8 +42,8 @@ class AuthController {
     return constructResponse(res, responseData);
   };
 
-  static detail = async (req, res) => {
-    const responseData = await AuthService.detail(req.user);
+  static me = async (req, res) => {
+    const responseData = await AuthService.me(req.user);
     return constructResponse(res, responseData);
   };
 

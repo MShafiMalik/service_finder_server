@@ -58,6 +58,8 @@ class AuthService {
           password: hash_pass,
           role: role,
           is_active: false,
+          image:
+            "https://res.cloudinary.com/dcwobtmhv/image/upload/v1661332737/users/default_fd7kir.png",
           activation_key: getRandomNumber(100000, 999999),
         });
         await new_user.save();
@@ -194,79 +196,8 @@ class AuthService {
     }
   }
 
-  async detail(user) {
-    const sellers = await UserModel.aggregate([
-      {
-        $match: {
-          _id: mongoose.Types.ObjectId(user._id),
-        },
-      },
-      {
-        $lookup: {
-          from: "buyer_reviews",
-          as: "reviews",
-          let: { user_id: "$_id" },
-          pipeline: [
-            {
-              $match: {
-                $expr: { $eq: ["$seller_user", "$$user_id"] },
-              },
-            },
-            {
-              $lookup: {
-                from: "users",
-                as: "buyer",
-                let: { user_id: "$buyer_user" },
-                pipeline: [
-                  {
-                    $match: {
-                      $expr: { $eq: ["$_id", "$$user_id"] },
-                    },
-                  },
-                ],
-              },
-            },
-            { $unwind: "$buyer" },
-          ],
-        },
-      },
-      {
-        $lookup: {
-          from: "services",
-          as: "services",
-          let: { user_id: "$_id" },
-          pipeline: [
-            {
-              $match: {
-                $expr: {
-                  $and: [
-                    { $eq: ["$seller_user", "$$user_id"] },
-                    { $eq: ["$status", SERVICE_STATUS.ACTIVE] },
-                  ],
-                },
-              },
-            },
-            {
-              $lookup: {
-                from: "buyer_reviews",
-                as: "reviews",
-                let: { service_id: "$_id" },
-                pipeline: [
-                  {
-                    $match: {
-                      $expr: { $eq: ["$service", "$$service_id"] },
-                    },
-                  },
-                ],
-              },
-            },
-          ],
-        },
-      },
-    ]).exec();
-    const seller = sellers.length > 0 ? sellers[0] : "";
-
-    return successResponse(seller, HTTP_STATUS.OK);
+  async me(user) {
+    return successResponse(user, HTTP_STATUS.OK);
   }
 
   async reset_password(email, password) {
