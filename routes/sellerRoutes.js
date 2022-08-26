@@ -12,6 +12,8 @@ router.post(
   SellerController.getOne
 );
 
+router.post("/me", CheckAuthToken, SellerController.getSellerDetail);
+
 router.post("/busy", CheckAuthToken, SellerController.busy);
 
 module.exports = router;

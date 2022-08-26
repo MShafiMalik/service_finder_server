@@ -9,6 +9,11 @@ class CategoryController {
     return constructResponse(res, responseData);
   };
 
+  static getSellerDetail = async (req, res) => {
+    const responseData = await SellerService.getSellerDetail(req.user);
+    return constructResponse(res, responseData);
+  };
+
   static busy = async (req, res) => {
     const { busy_date } = req.body;
     const responseData = await SellerService.busy(req.user, busy_date);

@@ -1,11 +1,9 @@
+const sgMail = require("@sendgrid/mail");
+
 const { default: mongoose } = require("mongoose");
 const bcrypt = require("bcryptjs");
 const logger = require("../logger/logger");
-const {
-  HTTP_STATUS,
-  SERVICE_STATUS,
-  LOGGER_TAGS,
-} = require("../utils/constants");
+const { HTTP_STATUS, LOGGER_TAGS } = require("../utils/constants");
 const {
   successResponse,
   errorResponse,
@@ -14,9 +12,11 @@ const {
   generatePasswordHash,
   getRandomNumber,
   convertToCapitalize,
+  sendOTPMail,
 } = require("../utils/utility");
 
 const UserModel = require("../database/models/users");
+const { SEND_GRID_API_KEY } = require("../config/config");
 
 class AuthService {
   async signup(
@@ -51,6 +51,7 @@ class AuthService {
       }
       try {
         const hash_pass = await generatePasswordHash(password);
+        const otp = getRandomNumber(100000, 999999);
         const new_user = new UserModel({
           firstname: firstname,
           lastname: lastname,
@@ -60,10 +61,10 @@ class AuthService {
           is_active: false,
           image:
             "https://res.cloudinary.com/dcwobtmhv/image/upload/v1661332737/users/default_fd7kir.png",
-          activation_key: getRandomNumber(100000, 999999),
+          activation_key: otp,
         });
         await new_user.save();
-        console.log(new_user.activation_key);
+        await sendOTPMail({ to: email, otp: otp });
         const updated_user = await UserModel.findById(new_user._id).select([
           "-password",
           "-key_expire_time",
@@ -97,9 +98,11 @@ class AuthService {
         "This User Is Not Registered!"
       );
     }
-    user.activation_key = getRandomNumber(100000, 999999);
+    const otp = getRandomNumber(100000, 999999);
+    user.activation_key = otp;
     user.key_expire_time = new Date();
     await user.save();
+    await sendOTPMail({ to: email, otp: otp });
     const updated_user = await UserModel.findById(user._id).select([
       "-password",
       "-key_expire_time",

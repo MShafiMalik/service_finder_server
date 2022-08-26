@@ -1,9 +1,13 @@
 const logger = require("../logger/logger");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const { JWT_SECRET_KEY } = require("../config/config");
+const {
+  JWT_SECRET_KEY,
+  SEND_GRID_MAIL_FROM,
+  SEND_GRID_API_KEY,
+} = require("../config/config");
 const { LOGGER_TAGS, HTTP_STATUS } = require("../utils/constants");
-
+const sgMail = require("@sendgrid/mail");
 const urlCrypt = require("url-crypt")(JWT_SECRET_KEY);
 
 const generatePasswordHash = async (password) => {
@@ -148,6 +152,29 @@ const convertToCapitalize = (str) => {
   return new_str.trim();
 };
 
+const sendOTPMail = async (body) => {
+  const message_body = {
+    from: SEND_GRID_MAIL_FROM,
+    to: body.to,
+    subject: "OTP Generate From Service Finder",
+    text: `Your verification code is  from Service Finder`,
+    html: `<p>Your verification code is  <h4> ${body.otp} </h4> for Service Finder </p>`,
+  };
+  return sendMail(message_body);
+};
+
+const sendMail = (body) => {
+  sgMail.setApiKey(SEND_GRID_API_KEY);
+  return sgMail
+    .send(body)
+    .then((res) => {
+      return res;
+    })
+    .catch((error) => {
+      return error;
+    });
+};
+
 module.exports = {
   generatePasswordHash,
   generateJwtToken,
@@ -161,4 +188,6 @@ module.exports = {
   encryptData,
   decryptData,
   convertToCapitalize,
+  sendOTPMail,
+  sendMail,
 };
