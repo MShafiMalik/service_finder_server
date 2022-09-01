@@ -66,6 +66,14 @@ class BookingController {
     return constructResponse(res, responseData);
   };
 
+  static get_active_all_for_buyer = async (req, res) => {
+    const { seller_user_id } = req.body;
+    const responseData = await BookingService.get_active_all_for_buyer(
+      seller_user_id
+    );
+    return constructResponse(res, responseData);
+  };
+
   static get_submitted_all = async (req, res) => {
     const responseData = await BookingService.get_submitted_all(req.user);
     return constructResponse(res, responseData);

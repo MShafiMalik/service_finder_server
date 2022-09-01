@@ -18,4 +18,13 @@ const bookingIdValidations = () => {
   return common.concatValidations(bookingIdValidation);
 };
 
-module.exports = { createBookingValidations, bookingIdValidations };
+const sellerUserIdValidations = () => {
+  const sellerUserIdValidation = common.sellerUserIdValidations();
+  return common.concatValidations(sellerUserIdValidation);
+};
+
+module.exports = {
+  createBookingValidations,
+  bookingIdValidations,
+  sellerUserIdValidations,
+};

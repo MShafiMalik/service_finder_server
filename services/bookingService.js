@@ -311,6 +311,14 @@ class BookingService {
     }
   }
 
+  async get_active_all_for_buyer(seller_user_id) {
+    const bookings = await BookingModel.find({
+      seller_user: seller_user_id,
+      status: BOOKING_STATUS.ACCEPTED,
+    });
+    return successResponse(bookings, HTTP_STATUS.OK);
+  }
+
   async get_submitted_all(user) {
     const bookings = await get_bookings(user, BOOKING_STATUS.SUBMITTED);
     if (bookings.success === false) {

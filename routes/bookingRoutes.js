@@ -78,6 +78,13 @@ router.get(
 router.get("/get-active-all", CheckAuthToken, BookingController.get_active_all);
 
 router.get(
+  "/get-active-all-for-buyer",
+  bookingValidations.sellerUserIdValidations(),
+  validateApiRequest,
+  BookingController.get_active_all_for_buyer
+);
+
+router.get(
   "/get-submitted-all",
   CheckAuthToken,
   BookingController.get_submitted_all
