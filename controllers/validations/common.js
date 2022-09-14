@@ -15,6 +15,14 @@ const emailValidations = (paramName = "email") => {
   ];
 };
 
+const otpValidations = (paramName = "otp") => {
+  return isRequiredValidations(paramName);
+};
+
+const jwtIdValidations = (paramName = "jwt_id") => {
+  return isRequiredValidations(paramName);
+};
+
 const firstnameValidations = (paramName = "firstname") => {
   return isRequiredValidations(paramName);
 };
@@ -23,6 +31,10 @@ const lastnameValidations = (paramName = "lastname") => {
 };
 
 const imageValidations = (paramName = "image") => {
+  return isRequiredValidations(paramName);
+};
+
+const nameValidations = (paramName = "name") => {
   return isRequiredValidations(paramName);
 };
 
@@ -203,6 +215,10 @@ const oldPasswordValidations = (paramName = "old_password") => {
 };
 
 const newPasswordValidations = (paramName = "new_password") => {
+  return commonPasswordValidations(paramName);
+};
+
+const confirmPasswordValidations = (paramName = "confirm_password") => {
   return commonPasswordValidations(paramName);
 };
 
@@ -450,6 +466,7 @@ module.exports = {
   passwordValidations,
   oldPasswordValidations,
   newPasswordValidations,
+  confirmPasswordValidations,
   phoneNumberValidations,
   integerValidation,
   booleanValidation,
@@ -482,4 +499,7 @@ module.exports = {
   catIdValidations,
   userIdValidations,
   keywordValidations,
+  otpValidations,
+  jwtIdValidations,
+  nameValidations,
 };

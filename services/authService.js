@@ -16,7 +16,6 @@ const {
 } = require("../utils/utility");
 
 const UserModel = require("../database/models/users");
-const { SEND_GRID_API_KEY } = require("../config/config");
 
 class AuthService {
   async signup(

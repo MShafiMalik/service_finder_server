@@ -1,3 +1,4 @@
+const adminRoutes = require("./adminRoutes");
 const authRoutes = require("./authRoutes");
 const categoryRoutes = require("./categoryRoutes");
 const serviceRoutes = require("./serviceRoutes");
@@ -8,6 +9,7 @@ const sellerRoutes = require("./sellerRoutes");
 const heroSliderRoutes = require("./heroSliderRoutes");
 
 module.exports = (app) => {
+  app.use("/api/admin/", adminRoutes);
   app.use("/api/auth/", authRoutes);
   app.use("/api/category/", categoryRoutes);
   app.use("/api/service/", serviceRoutes);

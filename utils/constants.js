@@ -27,6 +27,12 @@ const BOOKING_STATUS = {
   CANCELLED: "Cancelled",
 };
 
+const ADMIN_OTP_STATUS = {
+  IDLE: "Idle",
+  SENT: "Sent",
+  VERIFIED: "Verified",
+};
+
 const LOGGER_TAGS = {
   FOOTPRINT: "footprint",
   BAD_REQUEST: "badrequest",
@@ -105,6 +111,7 @@ module.exports = {
   ROLE_TYPES,
   SELLER_STATUS,
   SERVICE_STATUS,
+  ADMIN_OTP_STATUS,
   LOGGER_TAGS,
   DB_USER_STATUS,
   HTTP_STATUS,

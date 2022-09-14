@@ -33,6 +33,11 @@ const getUserIdFromJwtToken = async (token) => {
   return user_id;
 };
 
+const getEmailFromJwtToken = async (token) => {
+  const { email } = jwt.verify(token, JWT_SECRET_KEY);
+  return email;
+};
+
 const successResponse = (data, httpStatusCode, successMessage = "") => {
   if (!data || !httpStatusCode) {
     logger.error(
@@ -179,6 +184,7 @@ module.exports = {
   generatePasswordHash,
   generateJwtToken,
   getUserIdFromJwtToken,
+  getEmailFromJwtToken,
   successResponse,
   errorResponse,
   constructResponse,
