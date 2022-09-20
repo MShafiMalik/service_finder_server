@@ -1,4 +1,5 @@
 const express = require("express");
+const CategoryController = require("../controllers/categoryController");
 const router = express.Router();
 const ServiceController = require("../controllers/serviceController");
 const serviceValidations = require("../controllers/validations/serviceValidations");
@@ -19,6 +20,7 @@ router.post(
   validateApiRequest,
   ServiceController.single_category
 );
+
 router.post(
   "/single-service",
   serviceValidations.singleServiceValidations(),

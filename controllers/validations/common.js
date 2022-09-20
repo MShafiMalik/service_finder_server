@@ -393,6 +393,7 @@ const workStartTimeValidations = (paramName = "work_start_time") => {
 const bookingIdValidations = (paramName = "booking_id") => {
   return mongodbIdValidation(paramName);
 };
+
 const subRatingValidations = (rating, paramName, subParamName) => {
   if (!rating) {
     return {
@@ -456,6 +457,19 @@ const userIdValidations = (paramName = "user_id") => {
   return mongodbIdValidation(paramName);
 };
 
+const categoryIdArrValidations = (paramName = "category_ids") => {
+  return check(paramName)
+    .isArray({ min: 1 })
+    .withMessage(`${paramName} should be an array with at least one item`)
+    .custom((value) => {
+      const matches = value.filter((item) => item.match(checkForHexRegExp));
+      if (matches.length !== value.length) {
+        return Promise.reject(`Some items of ${paramName} are Invalid`);
+      }
+      return Promise.resolve();
+    });
+};
+
 module.exports = {
   validateRequest,
   concatValidations,
@@ -502,4 +516,5 @@ module.exports = {
   otpValidations,
   jwtIdValidations,
   nameValidations,
+  categoryIdArrValidations,
 };

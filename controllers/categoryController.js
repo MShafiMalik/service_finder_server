@@ -8,9 +8,27 @@ class CategoryController {
     return constructResponse(res, responseData);
   };
 
+  static getOne = async (req, res) => {
+    const { category_id } = req.body;
+    const responseData = await CategoryService.getOne(category_id);
+    return constructResponse(res, responseData);
+  };
+
   static add = async (req, res) => {
     const { name, image } = req.body;
     const responseData = await CategoryService.add(name, image);
+    return constructResponse(res, responseData);
+  };
+
+  static update = async (req, res) => {
+    const { category_id, name, image } = req.body;
+    const responseData = await CategoryService.update(category_id, name, image);
+    return constructResponse(res, responseData);
+  };
+
+  static delete = async (req, res) => {
+    const { category_ids } = req.body;
+    const responseData = await CategoryService.delete(category_ids);
     return constructResponse(res, responseData);
   };
 }
