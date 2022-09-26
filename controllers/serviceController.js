@@ -3,6 +3,11 @@ const ServiceService = new serviceService();
 const { constructResponse } = require("../utils/utility");
 
 class ServiceController {
+  static getActiveAll = async (_req, res) => {
+    const responseData = await ServiceService.getActiveAll();
+    return constructResponse(res, responseData);
+  };
+
   static getAll = async (_req, res) => {
     const responseData = await ServiceService.getAll();
     return constructResponse(res, responseData);
@@ -53,6 +58,18 @@ class ServiceController {
 
   static active = async (req, res) => {
     const responseData = await ServiceService.active(req);
+    return constructResponse(res, responseData);
+  };
+
+  static block = async (req, res) => {
+    const { service_id } = req.body;
+    const responseData = await ServiceService.block(service_id);
+    return constructResponse(res, responseData);
+  };
+
+  static unblock = async (req, res) => {
+    const { service_id } = req.body;
+    const responseData = await ServiceService.unblock(service_id);
     return constructResponse(res, responseData);
   };
 }

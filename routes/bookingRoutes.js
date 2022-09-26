@@ -4,6 +4,7 @@ const BookingController = require("../controllers/bookingController");
 const bookingValidations = require("../controllers/validations/bookingValidations");
 const validateApiRequest = require("../controllers/validations/validateRequest");
 const CheckAuthToken = require("../middlewares/checkAuthToken");
+const CheckAdminToken = require("../middlewares/checkAdminToken");
 
 router.post(
   "/create",
@@ -67,6 +68,15 @@ router.post(
   bookingValidations.bookingIdValidations(),
   validateApiRequest,
   BookingController.dispute_accept
+);
+
+router.get("/get-all", CheckAdminToken, BookingController.get_all);
+router.post(
+  "/cancel",
+  CheckAdminToken,
+  bookingValidations.bookingIdValidations(),
+  validateApiRequest,
+  BookingController.cancel
 );
 
 router.get(

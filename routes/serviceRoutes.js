@@ -5,8 +5,10 @@ const ServiceController = require("../controllers/serviceController");
 const serviceValidations = require("../controllers/validations/serviceValidations");
 const validateApiRequest = require("../controllers/validations/validateRequest");
 const CheckAuthToken = require("../middlewares/checkAuthToken");
+const CheckAdminToken = require("../middlewares/checkAdminToken");
 
 router.get("/all", ServiceController.getAll);
+router.get("/active/all", ServiceController.getActiveAll);
 router.post(
   "/search",
   serviceValidations.searchValidations(),
@@ -55,12 +57,29 @@ router.post(
   validateApiRequest,
   ServiceController.pause
 );
+
 router.post(
   "/active",
   CheckAuthToken,
   serviceValidations.singleServiceValidations(),
   validateApiRequest,
   ServiceController.active
+);
+
+router.post(
+  "/block",
+  CheckAdminToken,
+  serviceValidations.singleServiceValidations(),
+  validateApiRequest,
+  ServiceController.block
+);
+
+router.post(
+  "/unblock",
+  CheckAdminToken,
+  serviceValidations.singleServiceValidations(),
+  validateApiRequest,
+  ServiceController.unblock
 );
 
 module.exports = router;

@@ -287,6 +287,46 @@ class BookingService {
     );
   }
 
+  async get_all() {
+    const bookings = await BookingModel.find({})
+      .populate({
+        path: "seller_user",
+        Model: "User",
+        select: "-__v",
+      })
+      .populate({
+        path: "buyer_user",
+        Model: "User",
+        select: "-__v",
+      })
+      .populate({
+        path: "service",
+        Model: "Service",
+        select: "-__v",
+      });
+    return successResponse(bookings, HTTP_STATUS.OK);
+  }
+
+  async cancel(booking_id) {
+    const booking = await BookingModel.findById(booking_id);
+    if (!booking) {
+      return errorResponse(HTTP_STATUS.NOT_FOUND, "Booking Not Found!");
+    }
+    if (
+      booking.status === BOOKING_STATUS.CANCELLED ||
+      booking.status === BOOKING_STATUS.COMPLETED
+    ) {
+      return errorResponse(HTTP_STATUS.CONFLICT, "Invalid Booking!");
+    }
+    booking.status = BOOKING_STATUS.CANCELLED;
+    await booking.save();
+    return successResponse(
+      "",
+      HTTP_STATUS.OK,
+      "Booking Cancelled Successfully!"
+    );
+  }
+
   async get_pending_all(user) {
     const bookings = await get_bookings(user, BOOKING_STATUS.CREATED);
     if (bookings.success === false) {

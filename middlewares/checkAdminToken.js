@@ -17,21 +17,21 @@ const CheckAdminToken = async (req, res, next) => {
       } else {
         responseData = utility.errorResponse(
           HTTP_STATUS.FORBIDDEN,
-          "Unauthorized User, No Token, Please Login..."
+          "Unauthorized Admin, No Token, Please Login..."
         );
         return utility.constructResponse(res, responseData);
       }
     } catch (error) {
       responseData = utility.errorResponse(
         HTTP_STATUS.FORBIDDEN,
-        "Unauthorized User, No Token, Please Login..."
+        "Unauthorized Admin, No Token, Please Login..."
       );
       return utility.constructResponse(res, responseData);
     }
   } else {
     responseData = utility.errorResponse(
       HTTP_STATUS.FORBIDDEN,
-      "Unauthorized User, No Token, Please Login..."
+      "Unauthorized Admin, No Token, Please Login..."
     );
     return utility.constructResponse(res, responseData);
   }

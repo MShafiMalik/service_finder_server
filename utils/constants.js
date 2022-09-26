@@ -1,5 +1,4 @@
 const ROLE_TYPES = {
-  ADMIN: "Admin",
   SELLER: "Seller",
   BUYER: "Buyer",
 };
@@ -12,6 +11,7 @@ const SELLER_STATUS = {
 const SERVICE_STATUS = {
   ACTIVE: "Active",
   PAUSE: "Pause",
+  BLOCKED: "Blocked",
 };
 
 const BOOKING_STATUS = {

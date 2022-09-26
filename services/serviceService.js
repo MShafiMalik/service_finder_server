@@ -42,6 +42,50 @@ class ServiceService {
   async getAll() {
     const services = await ServiceModel.aggregate([
       {
+        $lookup: {
+          from: "users",
+          as: "seller",
+          let: { user_id: "$seller_user", service_id: "$_id" },
+          pipeline: [
+            {
+              $match: {
+                $expr: { $eq: ["$_id", "$$user_id"] },
+              },
+            },
+            {
+              $lookup: {
+                from: "buyer_reviews",
+                as: "reviews",
+                let: { user_id: "$_id" },
+                pipeline: [
+                  {
+                    $match: {
+                      $expr: { $and: [{ $eq: ["$seller_user", "$$user_id"] }] },
+                    },
+                  },
+                ],
+              },
+            },
+          ],
+        },
+      },
+      {
+        $lookup: {
+          from: "categories",
+          as: "category",
+          localField: "category",
+          foreignField: "_id",
+        },
+      },
+      { $unwind: "$category" },
+      { $unwind: "$seller" },
+    ]).exec();
+    return successResponse(services, HTTP_STATUS.OK);
+  }
+
+  async getActiveAll() {
+    const services = await ServiceModel.aggregate([
+      {
         $match: {
           status: SERVICE_STATUS.ACTIVE,
         },
@@ -380,6 +424,34 @@ class ServiceService {
       service,
       HTTP_STATUS.OK,
       "Service Activated Successfully!"
+    );
+  }
+
+  async block(service_id) {
+    const service = await ServiceModel.findById(service_id);
+    if (!service) {
+      return errorResponse(HTTP_STATUS.CONFLICT, "Invalid Service ID!");
+    }
+    service.status = SERVICE_STATUS.BLOCKED;
+    service.save();
+    return successResponse(
+      service,
+      HTTP_STATUS.OK,
+      "Service Blocked Successfully!"
+    );
+  }
+
+  async unblock(service_id) {
+    const service = await ServiceModel.findById(service_id);
+    if (!service) {
+      return errorResponse(HTTP_STATUS.CONFLICT, "Invalid Service ID!");
+    }
+    service.status = SERVICE_STATUS.ACTIVE;
+    service.save();
+    return successResponse(
+      service,
+      HTTP_STATUS.OK,
+      "Service Unblocked Successfully!"
     );
   }
 }
